@@ -14,7 +14,11 @@
     "pombe",
     "mutants",
     "autoopenraman",
-    "codebase"
+    "codebase",
+    "Saccharomyces",
+    "cerevisiae",
+    "Schizosaccharomyces",
+    "overfitting"
   ],
   "ignorePaths": [
     "node_modules",
