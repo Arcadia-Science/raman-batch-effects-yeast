@@ -22,7 +22,7 @@ Lorem ipsum dolor sit
 
 # The approach
 
-*How did you set up your experiment and why? Any key decision points along the way? Start with a broad overview and add subsections with more “materials and methods”-type detail as needed (subheaders below are examples). This may be overkill, use your best judgment. If methodology is particularly novel or advanced, consider publishing an additional “[Method](https://docs.google.com/document/d/11qAWPz7Ul_kmRAnVAuLj9D_-Z-ENWYtOw0QbfoxTcow/edit)” pub and/or making a protocol available on [Protocols.io](https://www.protocols.io/).* 
+*How did you set up your experiment and why? Any key decision points along the way? Start with a broad overview and add subsections with more “materials and methods”-type detail as needed (subheaders below are examples). This may be overkill, use your best judgment. If methodology is particularly novel or advanced, consider publishing an additional “[Method](https://docs.google.com/document/d/11qAWPz7Ul_kmRAnVAuLj9D_-Z-ENWYtOw0QbfoxTcow/edit)” pub and/or making a protocol available on [Protocols.io](https://www.protocols.io/).*
 
 Lorem ipsum dolor sit
 
@@ -38,7 +38,7 @@ Lorem ipsum dolor sit
 
 # Key takeaways
 
-*Imagine someone outside of your field who’s only going to read this section, and summarize the take-home message(s) for them in one paragraph.* 
+*Imagine someone outside of your field who’s only going to read this section, and summarize the take-home message(s) for them in one paragraph.*
 
 Lorem ipsum dolor sit
 

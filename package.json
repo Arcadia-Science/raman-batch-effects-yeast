@@ -1,0 +1,24 @@
+{
+  "name": "raman-batch-effects-pub",
+  "version": "1.0.0",
+  "description": "Publication about batch effects in Raman spectroscopy",
+  "private": true,
+  "scripts": {
+    "lint:md": "markdownlint-cli2 '**/*.md'",
+    "lint:md:fix": "markdownlint-cli2 --fix '**/*.md'",
+    "lint:links": "markdown-link-check --config .markdown-link-check.json **/*.md",
+    "lint:prose": "vale --config=.vale.ini .",
+    "lint:spell": "cspell '**/*.md'",
+    "lint": "npm run lint:md && npm run lint:spell",
+    "lint:all": "npm run lint:md && npm run lint:links && npm run lint:spell && npm run lint:prose",
+    "format": "npm run lint:md:fix"
+  },
+  "devDependencies": {
+    "cspell": "^8.0.0",
+    "markdown-link-check": "^3.12.0",
+    "markdownlint-cli2": "^0.12.0"
+  },
+  "keywords": ["raman", "spectroscopy", "scientific-publication"],
+  "author": "",
+  "license": "ISC"
+}

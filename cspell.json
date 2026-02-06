@@ -1,0 +1,31 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Raman",
+    "spectroscopy",
+    "spectrometry",
+    "spectroscopic",
+    "arcadia",
+    "github",
+    "repo",
+    "repos",
+    "thestacks",
+    "pombe",
+    "mutants",
+    "autoopenraman",
+    "codebase"
+  ],
+  "ignorePaths": [
+    "node_modules",
+    ".git",
+    "*.log",
+    "artifacts",
+    ".claude"
+  ],
+  "ignoreRegExpList": [
+    "/\\b[A-Z]{2,}\\b/g",
+    "/`[^`]*`/g",
+    "/\\[.*?\\]\\(.*?\\)/g"
+  ]
+}

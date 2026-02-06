@@ -1,0 +1,38 @@
+# markdownlint-cli2 configuration
+# https://github.com/DavidAnson/markdownlint-cli2
+
+# Glob patterns to lint
+globs:
+  - "**/*.md"
+  - "!node_modules"
+  - "!.git"
+  - "!.claude"
+  - "!artifacts"
+
+# markdownlint rules configuration
+config:
+  # Default state for all rules
+  default: true
+
+  # Disable line length rule (common for scientific writing)
+  MD013: false
+
+  # Allow inline HTML (useful for figures, tables)
+  MD033: false
+
+  # Allow duplicate headings (common in structured documents)
+  MD024:
+    siblings_only: true
+
+  # First line in file should be a top-level heading
+  MD041: false
+
+  # Allow bare URLs (can be useful for references)
+  MD034: false
+
+# Output formatting
+outputFormatters:
+  - ["markdownlint-cli2-formatter-default"]
+
+# Fix mode configuration
+fix: true
