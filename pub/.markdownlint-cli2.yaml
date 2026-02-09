@@ -1,13 +1,11 @@
-# markdownlint-cli2 configuration
+# markdownlint-cli2 configuration (for publication content)
 # https://github.com/DavidAnson/markdownlint-cli2
 
-# Glob patterns to lint
+# Glob patterns to lint (relative to /pub directory)
 globs:
   - "**/*.md"
-  - "!node_modules"
-  - "!.git"
-  - "!.claude"
-  - "!artifacts"
+  - "../README.md"
+  - "!node_modules/**"
 
 # markdownlint rules configuration
 config:

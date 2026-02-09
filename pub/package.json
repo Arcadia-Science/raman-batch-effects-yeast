@@ -4,11 +4,11 @@
   "description": "Publication about batch effects in Raman spectroscopy",
   "private": true,
   "scripts": {
-    "lint:md": "markdownlint-cli2 '**/*.md'",
-    "lint:md:fix": "markdownlint-cli2 --fix '**/*.md'",
-    "lint:links": "markdown-link-check --config .markdown-link-check.json **/*.md",
+    "lint:md": "markdownlint-cli2",
+    "lint:md:fix": "markdownlint-cli2 --fix",
+    "lint:links": "markdown-link-check --config .markdown-link-check.json **/*.md ../README.md",
     "lint:prose": "vale --config=.vale.ini .",
-    "lint:spell": "cspell '**/*.md'",
+    "lint:spell": "cspell '**/*.md' '../README.md'",
     "lint": "npm run lint:md && npm run lint:spell",
     "lint:all": "npm run lint:md && npm run lint:links && npm run lint:spell && npm run lint:prose",
     "format": "npm run lint:md:fix"

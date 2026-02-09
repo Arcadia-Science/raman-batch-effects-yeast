@@ -2,8 +2,8 @@
 node_modules/
 
 # Vale styles (downloaded)
-.vale/styles/Vale/
-.vale/styles/write-good/
+pub/.vale/styles/Vale/
+pub/.vale/styles/write-good/
 
 # Logs
 *.log
@@ -11,3 +11,4 @@ npm-debug.log*
 
 # OS files
 .DS_Store
+/external

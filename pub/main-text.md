@@ -4,13 +4,13 @@
 
 ## Purpose
 
-At Arcadia, we are interested in using spontaneous Raman spectroscopy for biological phenotyping. Previous efforts [TODO: add citations] have reported that Raman spectroscopy can be used to distinguish between different strains of microorganisms, different cell types, and different transcriptional states. In an effort to reproduce these results, we acquired spontaneous spectra of two small collections of yeast strains (see table) that we were already working with for other purposes.
+At Arcadia, we are interested in using spontaneous Raman spectroscopy for biological phenotyping. Previous efforts [TODO: add citations] have reported that Raman spectroscopy can be used to distinguish between different strains of microorganisms, different cell types, and different . In an effort to reproduce these results, we acquired spontaneous spectra of two small collections of yeast strains (see table) that we were already working with for other purposes.
 
 We found that Raman spectra contain a mix of experimentally structured noise (batch effects) and presumptively genuine biological signal.
 
-We performed this analysis to understand why Raman-based classification models sometimes fail to generalize across experiments. 
+We performed this analysis to understand why Raman-based classification models sometimes fail to generalize across experiments.
 
-The key takeaway is that standard k-fold cross-validation can mask batch effects, leading to overconfident models that don't generalize. 
+The key takeaway is that standard k-fold cross-validation can mask batch effects, leading to overconfident models that don't generalize.
 
 This work is primarily for researchers using Raman spectroscopy to distinguish between biological samples or to predict sample identity. We're sharing it to call attention to the existence (and likely ubiquity) of experimental batch effects in spontaneous Raman spectra of biological samples and the consequent importance of rigorous experimental design and cross-validated analysis when using this technique.
 
@@ -38,13 +38,13 @@ Strains were cultured in [TODO: add medium and conditions]. Saturated overnight 
 
 ### Raman spectroscopy
 
-Spontaneous Raman spectra of the dessicated samples were acquired using our "InstantRaman" Raman spectrometer.
+Spontaneous Raman spectra of the desiccated samples were acquired using our "InstantRaman" Raman spectrometer.
 
 TODO: Add details about the Raman instrument and acquisition parameters.
 
 ### Data processing
 
-The raw Raman spectra were processed using a standard pipeline based on the [`ramanspy`](TODO: add link) Python package. 
+The raw Raman spectra were processed using a standard pipeline based on the [`ramanspy`](TODO: add link) Python package.
 
 TODO: explain processing.
 

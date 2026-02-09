@@ -18,14 +18,12 @@
     "Saccharomyces",
     "cerevisiae",
     "Schizosaccharomyces",
-    "overfitting"
+    "overfitting",
+    "phenotyping"
   ],
   "ignorePaths": [
     "node_modules",
-    ".git",
-    "*.log",
-    "artifacts",
-    ".claude"
+    "*.log"
   ],
   "ignoreRegExpList": [
     "/\\b[A-Z]{2,}\\b/g",
