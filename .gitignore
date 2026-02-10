@@ -1,14 +1,13 @@
-# Dependencies
+/external
+/ignore
+
 node_modules/
 
 # Vale styles (downloaded)
 pub/.vale/styles/Vale/
 pub/.vale/styles/write-good/
 
-# Logs
 *.log
 npm-debug.log*
 
-# OS files
 .DS_Store
-/external
