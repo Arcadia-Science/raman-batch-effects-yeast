@@ -18,21 +18,17 @@ Raman spectroscopy offers a promising approach for distinguishing between biolog
 
 ### Experimental design
 
-We collected Raman spectra from nine yeast strains, including wild-type and mutant strains from both *Saccharomyces cerevisiae* and *Schizosaccharomyces pombe*. We generated three "end-to-end" replicates by repeating the sample preparation and imaging protocols in triplicate, each with separate cell cultures, physical plates, and imaging dates.
+We collected Raman spectra from nine yeast strains, including wild-type and mutant strains from both *Saccharomyces cerevisiae* and *Schizosaccharomyces pombe* (Table 1). We generated three "end-to-end" replicates by repeating the sample preparation and imaging protocols in triplicate, each with separate cell cultures, physical plates, and imaging dates.
 
 ### Species and strains
 
 TODO: add table of strains.
 
-### Sample preparation
+### Sample preparation and Raman spectroscopy
 
-TODO: add medium and conditions.
+TODO: add culture medium and culture conditions.
 
-Saturated overnight cultures were spotted onto stainless steel plates and allowed to desiccate at room temperature and pressure.
-
-### Raman spectroscopy
-
-Spontaneous Raman spectra of the dessicated samples were acquired using our "InstantRaman" Raman spectrometer [TODO: add reference].
+Saturated overnight cultures were spotted onto stainless steel plates and allowed to desiccate at room temperature and pressure. Spontaneous Raman spectra of the dessicated samples were acquired using our "InstantRaman" Raman spectrometer [TODO: add reference].
 
 TODO: Add details about the Raman instrument and acquisition parameters.
 
@@ -73,17 +69,19 @@ This result implies that plate-level batch effects dominate the signal, and the 
 
 We confirmed the existence of a plate-level batch effect by inverting the prediction and cross-validation dimensions: we trained a classifier to predict *plate identity* instead of strain identity, using leave-one-*strain*-out cross-validation. We found that the model could very reliably predict the plate from which each spectrum came. Since the plates correspond to end-to-end replicates of the same experimental protocol, there should be no biological differences between experiments. This adversarial test clearly demonstrates the presence of strong batch effects.
 
-[Figure 3: Confusion matrix showing successful plate prediction]
+[Figure 3: Confusion matrix showing successful plate prediction with uncorreceted data and failed plate prediction after batch correction]
 
 ### Batch correction may sometimes help
 
-We applied a linear mixed model to correct for plate-level effects on a per-wavenumber basis (TODO: add link to code). After correction, the "adversial" task to predict plate identity no longer worked (Figure XXX), confirming that the plate-level batch effect had been removed. However, strain-level classification was not improved, likely reflecting some combination of stochastic sample-level batch effects that are independent of experimental replicates and genuinely subtle differences between the strains in our dataset that may not result in detectable Raman signatures.
+We applied a linear mixed model to correct for plate-level effects on a per-wavenumber basis (TODO: add link to code). After correction, the "adversial" task to predict plate identity no longer worked (Figure XXX), confirming that the plate-level batch effect had been removed. However, strain-level classification was not improved (Figure 3B). This likely reflects some combination of 1) stochastic sample-level batch effects that are independent of experimental replicates and 2) genuinely subtle differences between the strains in our dataset that may not result in detectable Raman signatures.
+
+[Figure 4: Confusion matrix showing strain prediction after batch correction]
 
 ### Species-level classification works well with or without batch correction
 
 When we shifted from strain-level to species-level classification (*S. cerevisiae* vs. *S. pombe*), the model performed very well under leave-one-plate-out cross-validation, with or without batch correction. This suggests that Raman spectroscopy can detect authentic biological differences when the signal is stronger than the experimental batch effects. This result is, furthermore, consistent with our original strain-level model, as the misclassifications in the strain-level confusion matrix (Figure 1) were predominantly within species rather than between them.
 
-[Figure 4: Mean spectra for S. cerevisiae and S. pombe with feature importance overlay showing wave numbers where species differ]
+[Figure 5: Mean spectra for S. cerevisiae and S. pombe with feature importance overlay showing wave numbers where species differ]
 
 Finally, the out-of-bag estimates of feature importance from the random forest classifier aligned with wavenumbers at which the mean spectra visibly differed between species. This is an important sanity check that the model is learning biologically meaningful features.
 

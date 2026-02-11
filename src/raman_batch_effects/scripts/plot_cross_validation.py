@@ -38,7 +38,7 @@ STRAIN_ORDER = [
 ]
 
 
-def plot_kfold_cv_strain_prediction(dataset, overwrite: bool = False):
+def plot_kfold_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for k-fold cross-validation to predict strain.
 
@@ -68,12 +68,12 @@ def plot_kfold_cv_strain_prediction(dataset, overwrite: bool = False):
 
     plt.tight_layout()
     plotting.utils.save_figure(
-        OUTPUT_DIR / "confusion-matrix--kfold-cv--strain-prediction.png",
+        OUTPUT_DIR / f"cf--kfold-cv--strain-prediction{suffix}.pdf",
         overwrite=overwrite,
     )
 
 
-def plot_lodo_cv_strain_prediction(dataset, overwrite: bool = False):
+def plot_lodo_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-day-out cross-validation to predict strain.
 
@@ -103,12 +103,12 @@ def plot_lodo_cv_strain_prediction(dataset, overwrite: bool = False):
 
     plt.tight_layout()
     plotting.utils.save_figure(
-        OUTPUT_DIR / "confusion-matrix--lodo-cv--strain-prediction.png",
+        OUTPUT_DIR / f"cf--lodo-cv--strain-prediction{suffix}.pdf",
         overwrite=overwrite,
     )
 
 
-def plot_loso_cv_day_prediction(dataset, overwrite: bool = False):
+def plot_loso_cv_day_prediction(dataset, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-strain-out cross-validation to predict day.
 
@@ -136,12 +136,12 @@ def plot_loso_cv_day_prediction(dataset, overwrite: bool = False):
 
     plt.tight_layout()
     plotting.utils.save_figure(
-        OUTPUT_DIR / "confusion-matrix--loso-cv--day-prediction.png",
+        OUTPUT_DIR / f"cf--loso-cv--day-prediction{suffix}.pdf",
         overwrite=overwrite,
     )
 
 
-def plot_lodo_cv_species_prediction(dataset, overwrite: bool = False):
+def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-day-out cross-validation to predict species.
 
@@ -161,12 +161,12 @@ def plot_lodo_cv_species_prediction(dataset, overwrite: bool = False):
 
     plt.tight_layout()
     plotting.utils.save_figure(
-        OUTPUT_DIR / "confusion-matrix--lodo-cv--species-prediction.png",
+        OUTPUT_DIR / f"cf--lodo-cv--species-prediction{suffix}.pdf",
         overwrite=overwrite,
     )
 
 
-def plot_loso_cv_day_prediction_with_wrapper(dataset, overwrite: bool = False):
+def plot_loso_cv_day_prediction_with_wrapper(dataset, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-strain-out CV to predict day using wrapper function.
 
@@ -183,7 +183,7 @@ def plot_loso_cv_day_prediction_with_wrapper(dataset, overwrite: bool = False):
 
     plt.tight_layout()
     plotting.utils.save_figure(
-        OUTPUT_DIR / "confusion-matrix--loso-cv--day-prediction-wrapper.png",
+        OUTPUT_DIR / f"cf--loso-cv--day-prediction-wrapper{suffix}.pdf",
         overwrite=overwrite,
     )
 
@@ -192,32 +192,33 @@ def main(overwrite: bool = False):
     """
     Generate all cross-validation confusion matrix plots.
 
-    Creates five plots showing different cross-validation strategies:
-    1. K-fold CV for strain prediction (baseline)
-    2. Leave-one-day-out CV for strain prediction (tests generalization across batches)
-    3. Leave-one-strain-out CV for day prediction (adversarial test for batch effects)
-    4. Leave-one-day-out CV for species prediction (tests species-level signal)
-    5. Leave-one-strain-out CV for day prediction (alternative visualization)
+    Creates two versions of each plot: one using uncorrected data and one using
+    batch-corrected data.
     """
     datasets, _ = loaders.load_and_process_spectra(CONFIG.data_dirpath, CONFIG.crop_region)
 
-    # Use the uncorrected dataset for all cross-validation analyses
-    dataset = datasets.uncorrected
+    # Generate plots for both uncorrected and corrected datasets
+    for dataset_name, dataset in [
+        ("uncorrected", datasets.uncorrected),
+        ("corrected", datasets.corrected),
+    ]:
+        suffix = f"--{dataset_name}"
+        print(f"\n=== Generating {dataset_name} plots ===")
 
-    print("Generating k-fold CV strain prediction plot...")
-    plot_kfold_cv_strain_prediction(dataset, overwrite=overwrite)
+        print("Generating k-fold CV strain prediction plot...")
+        plot_kfold_cv_strain_prediction(dataset, suffix=suffix, overwrite=overwrite)
 
-    print("Generating leave-one-day-out CV strain prediction plot...")
-    plot_lodo_cv_strain_prediction(dataset, overwrite=overwrite)
+        print("Generating leave-one-day-out CV strain prediction plot...")
+        plot_lodo_cv_strain_prediction(dataset, suffix=suffix, overwrite=overwrite)
 
-    print("Generating leave-one-strain-out CV day prediction plot...")
-    plot_loso_cv_day_prediction(dataset, overwrite=overwrite)
+        print("Generating leave-one-strain-out CV day prediction plot...")
+        plot_loso_cv_day_prediction(dataset, suffix=suffix, overwrite=overwrite)
 
-    print("Generating leave-one-day-out CV species prediction plot...")
-    plot_lodo_cv_species_prediction(dataset, overwrite=overwrite)
+        print("Generating leave-one-day-out CV species prediction plot...")
+        plot_lodo_cv_species_prediction(dataset, suffix=suffix, overwrite=overwrite)
 
-    print("Generating leave-one-strain-out CV day prediction plot (wrapper)...")
-    plot_loso_cv_day_prediction_with_wrapper(dataset, overwrite=overwrite)
+        print("Generating leave-one-strain-out CV day prediction plot (wrapper)...")
+        plot_loso_cv_day_prediction_with_wrapper(dataset, suffix=suffix, overwrite=overwrite)
 
     print(f"\nAll plots saved to: {OUTPUT_DIR}")
 
