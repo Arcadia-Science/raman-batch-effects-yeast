@@ -6,19 +6,14 @@
   "scripts": {
     "lint:md": "markdownlint-cli2",
     "lint:md:fix": "markdownlint-cli2 --fix",
-    "lint:links": "markdown-link-check --config .markdown-link-check.json **/*.md ../README.md",
-    "lint:prose": "vale --config=.vale.ini .",
-    "lint:spell": "cspell '**/*.md' '../README.md'",
-    "lint": "npm run lint:md && npm run lint:spell",
-    "lint:all": "npm run lint:md && npm run lint:links && npm run lint:spell && npm run lint:prose",
+    "lint:links": "find . -maxdepth 1 -name '*.md' -exec markdown-link-check --config .markdown-link-check.json {} \\; && markdown-link-check --config .markdown-link-check.json ../README.md",
+    "lint": "npm run lint:md && npm run lint:links",
     "format": "npm run lint:md:fix"
   },
   "devDependencies": {
-    "cspell": "^8.0.0",
     "markdown-link-check": "^3.12.0",
     "markdownlint-cli2": "^0.12.0"
   },
-  "keywords": ["raman", "spectroscopy", "scientific-publication"],
   "author": "",
   "license": "ISC"
 }

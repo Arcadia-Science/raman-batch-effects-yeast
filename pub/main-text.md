@@ -4,7 +4,7 @@
 
 ## Purpose
 
-At Arcadia, we are interested in using spontaneous Raman spectroscopy for biological phenotyping. Previous efforts [TODO: add citations] have reported that Raman spectroscopy can be used to distinguish between different strains [https://www.nature.com/articles/s41467-019-12898-9], cell types [https://www.nature.com/articles/s41587-023-02082-2], and physiological states [https://elifesciences.org/reviewed-preprints/101485]. In an effort to obtain analogous results relevant to our own work, we acquired spontaneous spectra of two small collections of yeast strains, then trained standard ML models to predict both strain and species identity from the Raman spectra alone. We found that experimental batch effects dominated strain-level, but not species-level, biological signals.
+At Arcadia, we are interested in using spontaneous Raman spectroscopy for biological phenotyping. Previous efforts [TODO: add citations] have reported that Raman spectroscopy can be used to distinguish between different strains [ref](https://www.nature.com/articles/s41467-019-12898-9), cell types [ref](https://www.nature.com/articles/s41587-023-02082-2), and physiological states [ref](https://elifesciences.org/reviewed-preprints/101485). In an effort to obtain analogous results relevant to our own work, we acquired spontaneous spectra of two small collections of yeast strains, then trained standard ML models to predict both strain and species identity from the Raman spectra alone. We found that experimental batch effects dominated strain-level, but not species-level, biological signals.
 
 This work is primarily for researchers using Raman spectroscopy to distinguish between biological samples or states. We're sharing it to call attention to the existence of experimental batch effects in spontaneous Raman spectra of biological samples and of the consequent importance of rigorous experimental design and cross-validated analysis when using this technique.
 
@@ -38,7 +38,7 @@ TODO: Add details about the Raman instrument and acquisition parameters.
 
 ### Data processing
 
-The raw Raman spectra were processed using a standard pipeline based on the [`ramanspy`](TODO: add link) Python package. 
+The raw Raman spectra were processed using a standard pipeline based on the [`ramanspy`](TODO: add link) Python package.
 
 TODO: explain processing steps.
 
