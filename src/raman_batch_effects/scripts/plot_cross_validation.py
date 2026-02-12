@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from raman_batch_effects import loaders, plotting
+from raman_batch_effects.cache import cache
 from raman_batch_effects.cross_validation import (
     calc_confusion_matrix_lobo,
     calc_confusion_matrix_loo,
@@ -227,7 +228,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--reset", action="store_true")
+    parser.add_argument("--clear", action="store_true", help="Clear joblib cache before running")
     args = parser.parse_args()
+
+    if args.clear:
+        print("Clearing joblib cache...")
+        cache.clear()
+        print("Cache cleared.")
 
     if args.reset:
         shutil.rmtree(OUTPUT_DIR, ignore_errors=True)

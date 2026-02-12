@@ -10,6 +10,7 @@ import umap
 from sklearn.decomposition import PCA
 
 from raman_batch_effects import loaders, utils
+from raman_batch_effects.cache import cache
 from raman_batch_effects.scripts.config import YeastConfig, get_output_dir
 
 apc.mpl.setup()
@@ -198,7 +199,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--reset", action="store_true")
+    parser.add_argument("--clear", action="store_true", help="Clear joblib cache before running")
     args = parser.parse_args()
+
+    if args.clear:
+        print("Clearing joblib cache...")
+        cache.clear()
+        print("Cache cleared.")
 
     if args.reset:
         shutil.rmtree(OUTPUT_DIR, ignore_errors=True)

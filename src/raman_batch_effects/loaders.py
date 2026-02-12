@@ -60,6 +60,8 @@ def get_preprocessing_pipeline() -> ramanspy.preprocessing.Pipeline:
     """
     return ramanspy.preprocessing.Pipeline(
         [
+            # Crop to 300 cm⁻¹ to eliminate the sharp shoulder at low wavenumbers.
+            ramanspy.preprocessing.misc.Cropper(region=(300, None)),
             ramanspy.preprocessing.despike.WhitakerHayes(),
         ]
     )
@@ -275,6 +277,7 @@ def load_background_spectra(data_dirpath: str | Path) -> RamanDataset:
         spectrum = get_preprocessing_pipeline().apply(spectrum)
         dataset.add_spectrum(spectrum, date="august-2025", day=day)
 
+    # TODO: remove the code below if we decide not to use the November 2025 dataset.
     for day in [1, 2, 3]:
         filepath = data_dirpath / SUBDIRECTORY_NAMES_NOVEMBER_2025[day] / "SS" / "Default.csv"
 
@@ -336,7 +339,6 @@ def process_spectra(
     dataset: RamanDataset,
     crop_region: tuple[int, int],
     modpoly_poly_order: int | None = None,
-    aspls_lambda: float | None = None,
 ) -> RamanDataset:
     """
     Process yeast spectra by subtracting a baseline, smoothing, and normalizing.
@@ -345,29 +347,16 @@ def process_spectra(
         dataset: RamanDataset containing spectra to process.
         crop_region: The region of the spectrum to crop to before processing.
         modpoly_poly_order: Polynomial order for ModPoly baseline correction.
-        aspls_lambda: Lambda parameter for ASPLS baseline correction.
 
     Returns:
         New RamanDataset with processed spectra.
-
-    Note: Either modpoly_poly_order or aspls_lambda must be provided, but not both.
     """
-    if modpoly_poly_order is not None:
-        baseline_correction_step = ramanspy.preprocessing.baseline.ModPoly(
-            poly_order=modpoly_poly_order
-        )
-    elif aspls_lambda is not None:
-        baseline_correction_step = ramanspy.preprocessing.baseline.ASPLS(lam=aspls_lambda)
-    else:
-        raise ValueError("Either modpoly_poly_order or aspls_lambda must be provided.")
-
     processing_steps = [
         ramanspy.preprocessing.misc.Cropper(region=crop_region),
         ramanspy.preprocessing.denoise.SavGol(window_length=5, polyorder=3),
-        baseline_correction_step,
+        ramanspy.preprocessing.baseline.ModPoly(poly_order=modpoly_poly_order),
         ramanspy.preprocessing.normalise.AUC(),
     ]
-
     return dataset.apply(processing_steps)
 
 
