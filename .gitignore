@@ -2,6 +2,7 @@
 /ignore
 /data
 /output
+/figs
 
 node_modules/
 

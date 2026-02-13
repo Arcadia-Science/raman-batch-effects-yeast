@@ -28,7 +28,7 @@ TODO: add table of strains.
 
 TODO: add culture medium and culture conditions.
 
-Saturated overnight cultures were spotted onto stainless steel plates and allowed to desiccate at room temperature and pressure. Spontaneous Raman spectra of the dessicated samples were acquired using our "InstantRaman" Raman spectrometer [TODO: add reference].
+Saturated overnight cultures were spotted onto stainless steel plates and allowed to desiccate at room temperature and pressure. Spontaneous Raman spectra of the desiccated samples were acquired using our "InstantRaman" Raman spectrometer [TODO: add reference].
 
 TODO: Add details about the Raman instrument and acquisition parameters.
 
@@ -57,39 +57,41 @@ We took an ML-centric approach, treating each processed spectrum as a feature ve
 1. **Standard k-fold cross-validation** in which all spectra are randomly partitioned into training and test sets. This is the standard approach to cross-validation, and is often used in the literature for datasets that are known or assumed to be homogeneous and well-balanced.
 2. **Leave-one-plate-out cross-validation** in which spectra are partitioned into training and test sets according to the experimental replicate from which they came. In our case, we had three experimental replicates, so we partitioned all spectra from two plates into the training set, and all spectra from the held-out third plate into the test set.
 
-We used the standard `scikit-learn` implementation of a random forest classifier, with 100 trees and class-weighting set to "balanced" to correct for class imbalances (which were generally minor, given our balanced experimental design). We used the default hyperparameters for all other settings.
+We used the standard `scikit-learn` implementation of a random forest classifier, with 300 trees and class-weighting set to "balanced" to correct for class imbalances (which were minor, given our balanced experimental design). We used the default values for all other hyperparameters.
 
 ## The results
 
 After processing, we found that the spectra contained a few clear sharp peaks and many broad, diffuse features, and that the mean spectra for all strains and species looked similar (Figure 1). We therefore reasoned that carefully cross-validated modeling (rather than exploratory analysis) would be necessary to determine whether the spectra contained genuine biological signals.
 
+[Figure 1: Mean spectra for all strains and species]
+
 ### Standard cross-validation gives misleadingly good results
 
-We first evaluated a strain classification task under standard k-fold cross-validation. The model performed very well (Figure 1). The confusion matrix showed a strong diagonal, indicating that the model correctly predicted strain identity across most samples.
+We first evaluated a strain classification task under standard k-fold cross-validation using five folds. The model performed very well, with a one-versus-rest AUC score of XXX. The confusion matrix showed a strong diagonal (Figure 2), indicating that the model correctly predicted strain identity across most samples.
 
 [Figure 2: Confusion matrix from standard k-fold cross-validation showing strong diagonal]
 
 ### Leave-one-plate-out cross-validation reveals batch effects
 
-We then evaluated the same task under leave-one-plate-out cross-validation. The results were significantly worse (Figure 2); the confusion matrix showed that only a few strains remained distinguishable. This result implies that plate-level batch effects dominate whatever strain-level signal exists in the spectra, and that the standard cross-validation approach was effectively overfitting to these batch-specific features. This is possible because each fold in the k-fold cross-validation procedure includes spectra from all three plates, so the model can "see" batch-specific features and use them to help predict strain identity.
+We then evaluated the same task under leave-one-plate-out cross-validation. The results were significantly worse, with a one-versus-rest AUC score of XXX. The confusion matrix revealed that only a few strains remained distinguishable (Figure 3). This result implies that plate-level batch effects dominate whatever strain-level signal exists in the spectra, and that the standard cross-validation approach was effectively overfitting to these batch-specific features. This is possible because each fold in the k-fold cross-validation procedure includes spectra from all three plates, so the model can "see" batch-specific features and use them to help predict strain identity.
 
 [Figure 3: Confusion matrix from leave-one-plate-out cross-validation showing poor performance]
 
 ### Leave-one-strain-out cross-validation reveals a strong plate-level batch effect
 
-We confirmed the existence of a plate-level batch effect by inverting the prediction and cross-validation dimensions: we trained a classifier to predict *plate identity* instead of strain identity, using leave-one-*strain*-out cross-validation. We found that the model could very reliably predict the plate from which each spectrum came. Since the plates correspond to end-to-end replicates of the same experimental protocol, there should be no "true" biological differences between the plates, implying the presence of strong plate-level batch effects that the model is able to exploit.
+We confirmed the existence of a plate-level batch effect by inverting the prediction and cross-validation dimensions: we trained a classifier to predict *plate identity* instead of strain identity, using leave-one-*strain*-out cross-validation. We found that the model could very reliably predict the plate from which each spectrum came (Figure 4A). Since the plates correspond to end-to-end replicates of the same experimental protocol, there should be no "true" biological differences between the plates, implying the presence of strong plate-level batch effects that the model is able to exploit.
 
-[Figure 4: Confusion matrix showing successful plate prediction with uncorreceted data and failed plate prediction after batch correction]
+[Figure 4: Confusion matrices showing successful plate prediction with uncorrected data and failed plate prediction after batch correction]
 
 ### Batch correction may sometimes help
 
-We applied a linear mixed model to correct for plate-level effects on a per-wavenumber basis (TODO: add link to code). After correction, the "adversial" task to predict plate identity no longer worked (Figure XXX), confirming that the plate-level batch effect had been removed. However, strain-level classification was not improved (Figure 3B). This likely reflects some combination of 1) stochastic sample-level batch effects that are independent of experimental replicates and 2) genuinely subtle differences between the strains in our dataset that may not result in detectable Raman signatures.
+We applied a linear mixed model to correct for plate-level effects on a per-wavenumber basis (TODO: add link to code). After correction, the "adversarial" task to predict plate identity no longer worked (Figure 4B), confirming that the plate-level batch effect had been removed. However, strain-level classification was not improved (Figure 3B). This likely reflects some combination of 1) stochastic sample-level batch effects that are independent of experimental replicates and 2) genuinely subtle differences between the strains in our dataset that may not result in detectable Raman signatures.
 
 [Figure 5: Confusion matrix showing strain prediction after batch correction]
 
 ### Species-level classification works well with or without batch correction
 
-When we shifted from strain-level to species-level classification (*S. cerevisiae* vs. *S. pombe*), the model performance improved significantly (Figure 5). This was true with or without correcting for plate-level batch effects. This suggests that the spectra contain genuine species-level biological differences that are stronger than the experimental batch effects. Indeed, there was a hint that this was the case in our original strain-level confusion matrix (Figure 1); we can see that the misclassifications between strains were predominantly between strains of the same species.
+When we shifted from strain-level to species-level classification (*S. cerevisiae* vs. *S. pombe*), the model performance improved significantly (Figure 5). This was true with or without correcting for plate-level batch effects. This suggests that the spectra contain genuine species-level biological differences that are stronger than the experimental batch effects. Indeed, there was a hint that this was the case in our original strain-level confusion matrix (Figure 2): the misclassifications between strains were predominantly between strains of the same species.
 
 [Figure 6: Mean spectra for *S. cerevisiae* and *S. pombe* with feature importance overlay showing wave numbers where species differ]
 
@@ -101,4 +103,4 @@ Raman spectroscopy is an extremely sensitive technique. It can detect real, rele
 
 ## Next steps
 
-This work highlights the need for careful experimental design and validation strategies when using Raman spectroscopy for biological classification tasks. We recommend that experiments incorporate at least two, and ideally three, end-to-end replicates from the outset, and that analysis workflows include both leave-one-replicate-out cross-validation and "adversial" prediction tasks in which a model is trained to predict biologically meaningless variables like replicate or plate identifiers. Finally, we're also interested in exploring more sophisticated batch correction methods and understanding what types of biological differences tend to produce robust, generalizable Raman signatures versus those that are confounded by experimental variation.
+This work highlights the need for careful experimental design and validation strategies when using Raman spectroscopy for biological classification tasks. We recommend that experiments incorporate at least two, and ideally three, end-to-end replicates from the outset, and that analysis workflows include both leave-one-replicate-out cross-validation and "adversarial" prediction tasks in which a model is trained to predict biologically meaningless variables like replicate or plate identifiers. Finally, we're also interested in exploring more sophisticated batch correction methods and understanding what types of biological differences tend to produce robust, generalizable Raman signatures versus those that are confounded by experimental variation.

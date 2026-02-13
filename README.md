@@ -32,7 +32,6 @@ uv sync
 ```bash
 cd pub
 npm install
-npm run lint
 npm run lint:all
 npm run format
 ```
@@ -40,12 +39,10 @@ npm run format
 **Python linting and formatting:**
 
 ```bash
-uv run ruff check src/ tests/
-uv run ruff format src/ tests/
-
-pytest -v .
+make format
+make lint
 ```
 
 ## License
 
-MIT
+TODO: Add license.

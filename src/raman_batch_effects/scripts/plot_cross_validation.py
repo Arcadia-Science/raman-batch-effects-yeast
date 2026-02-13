@@ -155,9 +155,7 @@ def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool =
         y_column="species",
         batch_column="day",
         model=config.DEFAULT_RF_MODEL,
-        force_confusion_matrix=True,
-        show_cell_counts=True,
-        cmap=mpl.cm.Blues,
+        force_confusion_matrix=False,
     )
 
     plt.tight_layout()
