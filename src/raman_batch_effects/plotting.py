@@ -137,12 +137,21 @@ def plot_confusion_matrix(
 
     cm_normalized = confusion_matrix.astype("float") / confusion_matrix.sum(axis=1)[:, np.newaxis]
 
-    im = ax.imshow(
+    # Use pcolormesh instead of imshow for true vector output in PDFs
+    # pcolormesh requires mesh coordinates, so we create them
+    x = np.arange(num_labels + 1) - 0.5
+    y = np.arange(num_labels + 1) - 0.5
+    X_mesh, Y_mesh = np.meshgrid(x, y)
+
+    im = ax.pcolormesh(
+        X_mesh,
+        Y_mesh,
         cm_normalized,
         cmap=cmap or (apc.gradients.reds.reverse()).to_mpl_cmap(),
         vmin=0,
         vmax=1,
-        aspect="auto",
+        shading="flat",
+        edgecolors="none",
     )
 
     for i in range(num_labels):
@@ -159,12 +168,20 @@ def plot_confusion_matrix(
                 fontsize=10,
             )
 
+    # Set ticks at cell centers for pcolormesh
     ax.set_xticks(np.arange(num_labels))
     ax.set_yticks(np.arange(num_labels))
     ax.set_xticklabels(labels, rotation=45, ha="right")
     ax.set_yticklabels(labels)
     ax.set_xlabel("Predicted label")
     ax.set_ylabel("True label")
+
+    # Set axis limits to show all cells properly
+    ax.set_xlim(-0.5, num_labels - 0.5)
+    ax.set_ylim(-0.5, num_labels - 0.5)
+
+    # Invert y-axis to match imshow convention (origin at top)
+    ax.invert_yaxis()
 
     if show_colorbar:
         cbar = plt.colorbar(im, ax=ax)
@@ -210,16 +227,25 @@ def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None
     for idx, (batch_label, cm) in enumerate(sorted(confusion_matrices.items())):
         ax = axes[idx]
 
-        # Plot the confusion matrix
-        ax.imshow(cm, interpolation="nearest", cmap=cmap)
+        # Plot the confusion matrix using pcolormesh for vector output
+        n_labels = len(unique_labels)
+        x = np.arange(n_labels + 1) - 0.5
+        y = np.arange(n_labels + 1) - 0.5
+        X_mesh, Y_mesh = np.meshgrid(x, y)
+        ax.pcolormesh(X_mesh, Y_mesh, cm, cmap=cmap, shading="flat", edgecolors="none")
         ax.set_title(f"{batch_label}", fontsize=14)
 
-        # Set tick marks
-        tick_marks = np.arange(len(unique_labels))
+        # Set tick marks at cell centers
+        tick_marks = np.arange(n_labels)
         ax.set_xticks(tick_marks)
         ax.set_yticks(tick_marks)
         ax.set_xticklabels(unique_labels, rotation=45, ha="right", fontsize=12)
         ax.set_yticklabels(unique_labels, fontsize=12)
+
+        # Set axis limits and invert y-axis
+        ax.set_xlim(-0.5, n_labels - 0.5)
+        ax.set_ylim(-0.5, n_labels - 0.5)
+        ax.invert_yaxis()
 
         # Add text annotations
         thresh = cm.max() / 2.0

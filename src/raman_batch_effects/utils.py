@@ -36,7 +36,7 @@ def darken_hex_color(hex_color: str, amount: float = 0.3) -> str:
 
 def save_figure(
     filepath: str | Path,
-    dpi: int = 300,
+    dpi: int | None = None,
     bbox_inches: str = "tight",
     verbose: bool = True,
     overwrite: bool = False,
@@ -48,8 +48,8 @@ def save_figure(
     ----------
     filepath : str or Path
         Path where the figure should be saved.
-    dpi : int
-        Resolution in dots per inch.
+    dpi : int or None
+        Resolution in dots per inch. If None, uses 150 for PDFs and 300 for raster formats.
     bbox_inches : str
         Bounding box setting for the saved figure.
     verbose : bool
@@ -66,7 +66,26 @@ def save_figure(
         plt.close()
         return
 
-    plt.savefig(filepath, dpi=dpi, bbox_inches=bbox_inches, facecolor="white")
+    # Set DPI based on file extension if not explicitly provided
+    if dpi is None:
+        if filepath.suffix.lower() == ".pdf":
+            dpi = 150  # Lower DPI for vector PDFs to reduce file size
+        else:
+            dpi = 300  # Higher DPI for raster formats (PNG, JPG, etc.)
+
+    # For PDFs, use settings that optimize for vector output
+    if filepath.suffix.lower() == ".pdf":
+        # Use TrueType fonts for better compatibility and smaller file size
+        plt.savefig(
+            filepath,
+            dpi=dpi,
+            bbox_inches=bbox_inches,
+            facecolor="white",
+            format="pdf",
+            metadata={"Creator": "matplotlib", "Producer": "matplotlib"},
+        )
+    else:
+        plt.savefig(filepath, dpi=dpi, bbox_inches=bbox_inches, facecolor="white")
     plt.close()
 
     if verbose:

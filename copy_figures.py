@@ -93,19 +93,21 @@ def main(date: str, overwrite: bool):
 
     # Copy each figure
     for source, dest_name in figure_mappings:
-        dest = FIGS_DIR / dest_name
+        # Add date prefix to destination filename
+        dest_name_with_date = f"{date}-{dest_name}"
+        dest = FIGS_DIR / dest_name_with_date
 
         if not source.exists():
             print(f"⚠️  Warning: Source file not found: {source}")
             continue
 
         if dest.exists() and not overwrite:
-            print(f"⊘ Skipped {dest_name} (already exists, use --overwrite to replace)")
+            print(f"⊘ Skipped {dest_name_with_date} (already exists, use --overwrite to replace)")
             continue
 
         shutil.copy2(source, dest)
         size_mb = dest.stat().st_size / (1024 * 1024)
-        print(f"✓ Copied {dest_name} ({size_mb:.1f} MB)")
+        print(f"✓ Copied {dest_name_with_date} ({size_mb:.1f} MB)")
 
     print(f"\nAll figures copied to {FIGS_DIR}/")
 

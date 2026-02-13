@@ -24,14 +24,13 @@ unzip-data:
 	mkdir -p data_unzipped
 	unzip -o data.zip -d data_unzipped
 
-# Google Drive sync commands
 GDRIVE_REMOTE = gdrive
-GDRIVE_FIGS_PATH = raman-batch-effects/figs
+GDRIVE_FIGS_FOLDER_ID = 1TM-OurInS0BSn6DM404chWaMnpCSJgVX
 GDRIVE_DOC_NAME = raman-batch-effects-draft
 
 .PHONY: sync-figs
 sync-figs:
-	rclone sync figs/ $(GDRIVE_REMOTE):$(GDRIVE_FIGS_PATH) -v
+	rclone sync figs/ $(GDRIVE_REMOTE):{$(GDRIVE_FIGS_FOLDER_ID)} -v
 
 .PHONY: export-doc
 export-doc:
