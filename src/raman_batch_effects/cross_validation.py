@@ -12,6 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
+    matthews_corrcoef,
     mean_absolute_error,
     mean_squared_error,
     precision_score,
@@ -35,6 +36,8 @@ class CVResults:
     per_fold_macro_f1: list[float]
     per_fold_weighted_f1: list[float]
     per_fold_ovr_auc: list[float]
+    per_fold_ovr_mcc: list[float]
+    per_fold_mcc: list[float]
     aggregate_y_true: np.ndarray
     aggregate_y_pred: np.ndarray
 
@@ -55,8 +58,25 @@ def _per_fold_metrics(y_true, y_pred, unique_labels, y_proba=None):
             y_true, y_pred, labels=unique_labels, average="weighted", zero_division=0
         ),
         "ovr_auc": _per_fold_ovr_auc(y_true, y_proba, unique_labels),
+        "ovr_mcc": _per_fold_ovr_mcc(y_true, y_pred, unique_labels),
+        "mcc": matthews_corrcoef(y_true, y_pred),
     }
     return result
+
+
+def _per_fold_ovr_mcc(y_true, y_pred, unique_labels):
+    """Compute macro-averaged one-vs-rest MCC for a single fold."""
+    mccs = []
+    for label in unique_labels:
+        y_true_binary = (np.asarray(y_true) == label).astype(int)
+        y_pred_binary = (np.asarray(y_pred) == label).astype(int)
+        # MCC is undefined if either column is constant — skip those classes.
+        if len(np.unique(y_true_binary)) < 2 and len(np.unique(y_pred_binary)) < 2:
+            continue
+        mccs.append(matthews_corrcoef(y_true_binary, y_pred_binary))
+    if not mccs:
+        return None
+    return float(np.mean(mccs))
 
 
 def _per_fold_ovr_auc(y_true, y_proba, unique_labels):
@@ -198,6 +218,8 @@ def calc_confusion_matrix_kfold(
         per_fold_macro_f1=[m["macro_f1"] for m in fold_metrics],
         per_fold_weighted_f1=[m["weighted_f1"] for m in fold_metrics],
         per_fold_ovr_auc=[m["ovr_auc"] for m in fold_metrics if m["ovr_auc"] is not None],
+        per_fold_ovr_mcc=[m["ovr_mcc"] for m in fold_metrics if m["ovr_mcc"] is not None],
+        per_fold_mcc=[m["mcc"] for m in fold_metrics],
         aggregate_y_true=Y_true,
         aggregate_y_pred=Y_pred,
     )
@@ -337,6 +359,8 @@ def calc_confusion_matrix_lobo(
         per_fold_macro_f1=[m["macro_f1"] for m in fold_metrics],
         per_fold_weighted_f1=[m["weighted_f1"] for m in fold_metrics],
         per_fold_ovr_auc=[m["ovr_auc"] for m in fold_metrics if m["ovr_auc"] is not None],
+        per_fold_ovr_mcc=[m["ovr_mcc"] for m in fold_metrics if m["ovr_mcc"] is not None],
+        per_fold_mcc=[m["mcc"] for m in fold_metrics],
         aggregate_y_true=np.array(agg_y_true),
         aggregate_y_pred=np.array(agg_y_pred),
     )

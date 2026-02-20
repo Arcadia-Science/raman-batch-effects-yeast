@@ -6,7 +6,7 @@ import arcadia_pycolor as apc
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import accuracy_score, classification_report
+import yaml
 
 from raman_batch_effects import loaders, plotting
 from raman_batch_effects.cache import cache
@@ -46,53 +46,35 @@ def _format_metrics_report(
     cv_strategy,
     cv_results: CVResults,
 ):
-    """Format classification metrics as a text report."""
-    n_folds = len(cv_results.per_fold_accuracy)
-    unique_labels = cv_results.unique_labels
-
-    lines = []
-    lines.append("Cross-Validation Performance Metrics")
-    lines.append("=" * 50)
-    lines.append(f"Task: {task_description}")
-    lines.append(f"CV strategy: {cv_strategy}")
-    lines.append(f"Number of folds/batches: {n_folds}")
-    lines.append(f"Number of classes: {len(unique_labels)}")
-    lines.append(f"Total samples: {len(cv_results.aggregate_y_true)}")
-    lines.append("")
-
-    lines.append(f"Per-Fold/Batch Metrics (mean ± std across {n_folds} folds/batches):")
+    """Format classification metrics as a YAML report with raw per-fold values."""
     metric_fields = {
-        "per_fold_accuracy": "Accuracy",
-        "per_fold_macro_precision": "Macro Precision",
-        "per_fold_macro_recall": "Macro Recall",
-        "per_fold_macro_f1": "Macro F1",
-        "per_fold_weighted_f1": "Weighted F1",
-        "per_fold_ovr_auc": "OVR AUC",
+        "per_fold_accuracy": "accuracy",
+        "per_fold_macro_precision": "macro_precision",
+        "per_fold_macro_recall": "macro_recall",
+        "per_fold_macro_f1": "macro_f1",
+        "per_fold_weighted_f1": "weighted_f1",
+        "per_fold_ovr_auc": "ovr_auc",
+        "per_fold_ovr_mcc": "ovr_mcc",
+        "per_fold_mcc": "mcc",
     }
-    for field, label in metric_fields.items():
+
+    per_fold = {}
+    for field, key in metric_fields.items():
         values = getattr(cv_results, field)
         if not values:
             continue
-        mean_val = np.mean(values)
-        std_val = np.std(values)
-        lines.append(f"  {label:<20s} {mean_val:.4f} ± {std_val:.4f}")
-    lines.append("")
+        per_fold[key] = [round(float(v), 4) for v in values]
 
-    lines.append("Overall Metrics (aggregated across all folds/batches):")
-    overall_acc = accuracy_score(cv_results.aggregate_y_true, cv_results.aggregate_y_pred)
-    lines.append(f"  {'Accuracy':<20s} {overall_acc:.4f}")
-    lines.append("")
+    report = {
+        "task": task_description,
+        "cv_strategy": cv_strategy,
+        "n_folds": len(cv_results.per_fold_accuracy),
+        "n_classes": len(cv_results.unique_labels),
+        "n_samples": int(len(cv_results.aggregate_y_true)),
+        "per_fold_metrics": per_fold,
+    }
 
-    lines.append("Per-Class Metrics (aggregated across all folds/batches):")
-    report = classification_report(
-        cv_results.aggregate_y_true,
-        cv_results.aggregate_y_pred,
-        labels=list(unique_labels),
-        zero_division=0,
-    )
-    lines.append(report)
-
-    return "\n".join(lines)
+    return yaml.dump(report, sort_keys=False, default_flow_style=False)
 
 
 def _save_metrics(filepath, report_text, overwrite=False):
@@ -146,7 +128,7 @@ def plot_kfold_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool =
         cv_results=cv_results,
     )
     _save_metrics(
-        OUTPUT_DIR / f"metrics--kfold-cv--strain-prediction{suffix}.txt",
+        OUTPUT_DIR / f"metrics--kfold-cv--strain-prediction{suffix}.yaml",
         report,
         overwrite=overwrite,
     )
@@ -192,7 +174,7 @@ def plot_lodo_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = 
         cv_results=cv_results,
     )
     _save_metrics(
-        OUTPUT_DIR / f"metrics--lodo-cv--strain-prediction{suffix}.txt",
+        OUTPUT_DIR / f"metrics--lodo-cv--strain-prediction{suffix}.yaml",
         report,
         overwrite=overwrite,
     )
@@ -236,7 +218,7 @@ def plot_loso_cv_day_prediction(dataset, suffix: str = "", overwrite: bool = Fal
         cv_results=cv_results,
     )
     _save_metrics(
-        OUTPUT_DIR / f"metrics--loso-cv--day-prediction{suffix}.txt",
+        OUTPUT_DIR / f"metrics--loso-cv--day-prediction{suffix}.yaml",
         report,
         overwrite=overwrite,
     )
@@ -281,7 +263,7 @@ def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool =
         cv_results=cv_results,
     )
     _save_metrics(
-        OUTPUT_DIR / f"metrics--lodo-cv--species-prediction{suffix}.txt",
+        OUTPUT_DIR / f"metrics--lodo-cv--species-prediction{suffix}.yaml",
         report,
         overwrite=overwrite,
     )
