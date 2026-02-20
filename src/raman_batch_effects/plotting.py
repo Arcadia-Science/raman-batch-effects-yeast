@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator
 from sklearn.metrics import auc
 
 from raman_batch_effects import utils
-from raman_batch_effects.cross_validation import calc_confusion_matrix_lobo, calc_roc_lobo
+from raman_batch_effects.cross_validation import CVResults, calc_confusion_matrix_lobo, calc_roc_lobo
 from raman_batch_effects.datasets import RamanDataset
 
 DEFAULT_COLOR_PALETTE = apc.palettes.all_palettes[0]
@@ -113,7 +113,6 @@ def plot_confusion_matrix(
     ax=None,
     figsize=None,
     show_colorbar=True,
-    ovr_auc=None,
     cmap=None,
 ):
     """
@@ -126,7 +125,6 @@ def plot_confusion_matrix(
         ax: Optional matplotlib axis to plot on.
         figsize: Optional figure size tuple.
         show_colorbar: If True, show colorbar.
-        ovr_auc: Optional One-vs-Rest AUC score to display on the plot.
     """
 
     num_labels = len(labels)
@@ -186,17 +184,6 @@ def plot_confusion_matrix(
     if show_colorbar:
         cbar = plt.colorbar(im, ax=ax)
         cbar.set_label("Normalized Rate", rotation=270, labelpad=20)
-
-    if ovr_auc is not None:
-        ax.text(
-            0.98,
-            1.00,
-            f"AUC = {ovr_auc:.2f}",
-            transform=ax.transAxes,
-            fontsize=12,
-            verticalalignment="bottom",
-            horizontalalignment="right",
-        )
 
 
 def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None, cmap="Blues"):
@@ -439,6 +426,7 @@ def plot_lobo_cv_results(
     ax_right_top = fig.add_subplot(gridspec[0, 1])
     ax_right_bottom = fig.add_subplot(gridspec[1, 1])
 
+    cv_results = None
     if is_binary and not force_confusion_matrix:
         # Binary classification: use ROC curve.
         Y_binary = (Y == unique_values[1]).astype(int)
@@ -447,16 +435,14 @@ def plot_lobo_cv_results(
 
     else:
         # Multi-class classification: use confusion matrix.
-        confusion_matrix, unique_labels, ovr_auc, importances = calc_confusion_matrix_lobo(
-            X, Y, batch_labels=batch_labels, model=model
-        )
+        cv_results = calc_confusion_matrix_lobo(X, Y, batch_labels=batch_labels, model=model)
+        importances = cv_results.mean_feature_importances
         plot_confusion_matrix(
-            confusion_matrix,
-            unique_labels,
+            cv_results.confusion_matrix,
+            cv_results.unique_labels,
             ax=ax_left,
             show_cell_counts=show_cell_counts,
             show_colorbar=False,
-            ovr_auc=ovr_auc,
             cmap=cmap,
         )
 
@@ -481,6 +467,8 @@ def plot_lobo_cv_results(
         fig.suptitle(title)
 
     plt.tight_layout()
+
+    return cv_results
 
 
 @dataclass
@@ -584,16 +572,16 @@ def plot_lobo_cv_results_multirow(
             )
             plot_roc_curve(fpr, tpr, ax=ax_left)
         else:
-            confusion_matrix, unique_labels, ovr_auc, importances = calc_confusion_matrix_lobo(
+            cv_results = calc_confusion_matrix_lobo(
                 X, Y, batch_labels=batch_labels, model=model
             )
+            importances = cv_results.mean_feature_importances
             plot_confusion_matrix(
-                confusion_matrix,
-                unique_labels,
+                cv_results.confusion_matrix,
+                cv_results.unique_labels,
                 ax=ax_left,
                 show_cell_counts=False,
                 show_colorbar=False,
-                ovr_auc=ovr_auc,
             )
 
         if importances is None or len(importances) == 0:
