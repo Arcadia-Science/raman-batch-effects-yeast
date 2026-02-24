@@ -8,7 +8,10 @@ from sklearn.base import BaseEstimator
 from sklearn.metrics import auc
 
 from raman_batch_effects import utils
-from raman_batch_effects.cross_validation import CVResults, calc_confusion_matrix_lobo, calc_roc_lobo
+from raman_batch_effects.cross_validation import (
+    calc_confusion_matrix_lobo,
+    calc_roc_lobo,
+)
 from raman_batch_effects.datasets import RamanDataset
 
 DEFAULT_COLOR_PALETTE = apc.palettes.all_palettes[0]
@@ -572,9 +575,7 @@ def plot_lobo_cv_results_multirow(
             )
             plot_roc_curve(fpr, tpr, ax=ax_left)
         else:
-            cv_results = calc_confusion_matrix_lobo(
-                X, Y, batch_labels=batch_labels, model=model
-            )
+            cv_results = calc_confusion_matrix_lobo(X, Y, batch_labels=batch_labels, model=model)
             importances = cv_results.mean_feature_importances
             plot_confusion_matrix(
                 cv_results.confusion_matrix,

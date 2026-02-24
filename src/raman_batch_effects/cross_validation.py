@@ -2,21 +2,17 @@ from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import partial
-from multiprocessing import Pool
 
 import numpy as np
 from sklearn import metrics
 from sklearn.base import BaseEstimator, clone
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
     matthews_corrcoef,
-    mean_absolute_error,
-    mean_squared_error,
     precision_score,
-    r2_score,
     recall_score,
     roc_auc_score,
     roc_curve,
@@ -95,6 +91,7 @@ def _per_fold_ovr_auc(y_true, y_proba, unique_labels):
             return roc_auc_score(y_true, y_proba, multi_class="ovr", average="macro")
     except ValueError:
         return None
+
 
 # Named tuples for worker function results
 RocFoldResult = namedtuple(

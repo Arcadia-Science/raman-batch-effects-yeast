@@ -49,15 +49,17 @@ def main():
             dataset = "unknown"
 
         metrics = row.get("per_fold_metrics", {})
-        summary.append({
-            "task": row["task"],
-            "dataset": dataset,
-            "cv_strategy": row["cv_strategy"],
-            "n_folds": row["n_folds"],
-            "n_classes": row["n_classes"],
-            "accuracy": _fmt(metrics.get("accuracy", [])),
-            "mcc": _fmt(metrics.get("mcc", [])),
-        })
+        summary.append(
+            {
+                "task": row["task"],
+                "dataset": dataset,
+                "cv_strategy": row["cv_strategy"],
+                "n_folds": row["n_folds"],
+                "n_classes": row["n_classes"],
+                "accuracy": _fmt(metrics.get("accuracy", [])),
+                "mcc": _fmt(metrics.get("mcc", [])),
+            }
+        )
 
     output_path = OUTPUT_DIR / "cv_metrics_summary.yaml"
     output_path.write_text(yaml.dump(summary, sort_keys=False, default_flow_style=False))

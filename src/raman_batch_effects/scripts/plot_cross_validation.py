@@ -12,16 +12,15 @@ from raman_batch_effects import loaders, plotting
 from raman_batch_effects.cache import cache
 from raman_batch_effects.cross_validation import (
     CVResults,
-    calc_confusion_matrix_lobo,
     calc_confusion_matrix_kfold,
+    calc_confusion_matrix_lobo,
 )
 from raman_batch_effects.scripts import config
-from raman_batch_effects.scripts.config import YeastConfig, get_output_dir
 
 apc.mpl.setup()
 
-CONFIG = YeastConfig()
-OUTPUT_DIR = get_output_dir(Path(__file__).stem)
+CONFIG = config.YeastConfig()
+OUTPUT_DIR = config.get_output_dir(Path(__file__).stem)
 
 AUGUST_2025 = "august-2025"
 

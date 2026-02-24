@@ -26,24 +26,19 @@ unzip-data:
 
 GDRIVE_REMOTE = gdrive
 GDRIVE_FIGS_FOLDER_ID = 1TM-OurInS0BSn6DM404chWaMnpCSJgVX
-GDRIVE_DOC_NAME = raman-batch-effects-draft
+
+# Manually set the ID of the Google Docs document to import.
+GDRIVE_DOC_ID = 1uyDDqF-pRwffHfJm9eHOo19cOZmrJeOpp7eWDHQm1-Y
 
 .PHONY: sync-figs
 sync-figs:
 	rclone sync figs/ $(GDRIVE_REMOTE):{$(GDRIVE_FIGS_FOLDER_ID)} -v
 
-.PHONY: export-doc
-export-doc:
-	@echo "Converting markdown to docx..."
-	pandoc pub/main-text.md -o pub/main-text.docx
-	@echo "Uploading to Google Drive..."
-	rclone copyto pub/main-text.docx $(GDRIVE_REMOTE):$(GDRIVE_DOC_NAME).docx
-	@echo "Done! Open in Google Drive and it will convert to Google Docs format"
-
 .PHONY: import-doc
 import-doc:
-	@echo "Downloading from Google Drive as docx..."
-	rclone copyto $(GDRIVE_REMOTE):$(GDRIVE_DOC_NAME).docx pub/main-text-imported.docx --drive-export-formats docx
+	@echo "Downloading Google Doc as docx..."
+	rclone backend copyid $(GDRIVE_REMOTE): $(GDRIVE_DOC_ID) pub/ --drive-export-formats docx
 	@echo "Converting docx to markdown..."
-	pandoc pub/main-text-imported.docx -o pub/main-text.md --wrap=none --extract-media=pub/media
+	pandoc pub/*.docx -o pub/main-text.md --wrap=none --extract-media=pub/media
+	rm -f pub/*.docx
 	@echo "Done! Check pub/main-text.md"
