@@ -38,4 +38,5 @@ def get_output_dir(script_name: str) -> Path:
     """Get the output directory for a script, creating it if necessary."""
     todays_date = datetime.today().strftime("%Y-%m-%d")
     output_dir = Path("output") / todays_date / script_name
+    output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir

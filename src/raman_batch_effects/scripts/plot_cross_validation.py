@@ -87,7 +87,7 @@ def _save_metrics(filepath, report_text, overwrite=False):
     print(f"  Saved metrics to {filepath.name}")
 
 
-def plot_kfold_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = False):
+def plot_kfold_cv_strain_prediction(dataset, model, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for k-fold cross-validation to predict strain.
 
@@ -100,7 +100,7 @@ def plot_kfold_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool =
     cv_results = calc_confusion_matrix_kfold(
         X,
         Y=target_labels,
-        model=config.DEFAULT_RF_MODEL,
+        model=model,
         n_folds=5,
     )
 
@@ -133,7 +133,7 @@ def plot_kfold_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool =
     )
 
 
-def plot_lodo_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = False):
+def plot_lodo_cv_strain_prediction(dataset, model, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-day-out cross-validation to predict strain.
 
@@ -147,7 +147,7 @@ def plot_lodo_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = 
         X,
         Y=target_labels,
         batch_labels=labels.day.values,
-        model=config.DEFAULT_RF_MODEL,
+        model=model,
     )
 
     unique_strains = [label.split("-")[1] for label in cv_results.unique_labels]
@@ -179,7 +179,7 @@ def plot_lodo_cv_strain_prediction(dataset, suffix: str = "", overwrite: bool = 
     )
 
 
-def plot_loso_cv_day_prediction(dataset, suffix: str = "", overwrite: bool = False):
+def plot_loso_cv_day_prediction(dataset, model, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-strain-out cross-validation to predict day.
 
@@ -194,7 +194,7 @@ def plot_loso_cv_day_prediction(dataset, suffix: str = "", overwrite: bool = Fal
         X,
         Y=target_labels,
         batch_labels=labels.strain.values,
-        model=config.DEFAULT_RF_MODEL,
+        model=model,
     )
 
     plotting.plot_confusion_matrix(
@@ -223,7 +223,7 @@ def plot_loso_cv_day_prediction(dataset, suffix: str = "", overwrite: bool = Fal
     )
 
 
-def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool = False):
+def plot_lodo_cv_species_prediction(dataset, model, suffix: str = "", overwrite: bool = False):
     """
     Generate confusion matrix for leave-one-day-out cross-validation to predict species.
 
@@ -235,7 +235,7 @@ def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool =
         dataset_filtered,
         y_column="species",
         batch_column="day",
-        model=config.DEFAULT_RF_MODEL,
+        model=model,
         force_confusion_matrix=False,
     )
 
@@ -253,7 +253,7 @@ def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool =
             X,
             Y=labels["species"].values,
             batch_labels=labels["day"].values,
-            model=config.DEFAULT_RF_MODEL,
+            model=model,
         )
 
     report = _format_metrics_report(
@@ -268,7 +268,9 @@ def plot_lodo_cv_species_prediction(dataset, suffix: str = "", overwrite: bool =
     )
 
 
-def plot_loso_cv_day_prediction_with_wrapper(dataset, suffix: str = "", overwrite: bool = False):
+def plot_loso_cv_day_prediction_with_wrapper(
+    dataset, model, suffix: str = "", overwrite: bool = False
+):
     """
     Generate confusion matrix for leave-one-strain-out CV to predict day,
     using the `plot_lobo_cv_results` wrapper function instead of plotting
@@ -280,7 +282,7 @@ def plot_loso_cv_day_prediction_with_wrapper(dataset, suffix: str = "", overwrit
         dataset_filtered,
         y_column="day",
         batch_column="strain",
-        model=config.DEFAULT_RF_MODEL,
+        model=model,
     )
 
     plt.tight_layout()
@@ -294,33 +296,36 @@ def main(overwrite: bool = False):
     """
     Generate all cross-validation confusion matrix plots.
 
-    Creates two versions of each plot: one using uncorrected data and one using
-    batch-corrected data.
+    Creates two versions of each plot for each model: one using uncorrected data
+    and one using batch-corrected data.
     """
     datasets, _ = loaders.load_and_process_spectra(CONFIG.data_dirpath, CONFIG.crop_region)
 
-    # Generate plots for both uncorrected and corrected datasets
-    for dataset_name, dataset in [
-        ("uncorrected", datasets.uncorrected),
-        ("corrected", datasets.corrected),
-    ]:
-        suffix = f"--{dataset_name}"
-        print(f"\n=== Generating {dataset_name} plots ===")
+    for model_name, model in [("rf", config.DEFAULT_RF_MODEL), ("svc", config.DEFAULT_SVC_MODEL)]:
+        for dataset_name, dataset in [
+            ("uncorrected", datasets.uncorrected),
+            ("corrected-lmm", datasets.corrected_lmm),
+            ("corrected-combat", datasets.corrected_combat),
+        ]:
+            suffix = f"--{model_name}--{dataset_name}"
+            print(f"\n=== Generating {model_name} / {dataset_name} plots ===")
 
-        print("Generating k-fold CV strain prediction plot...")
-        plot_kfold_cv_strain_prediction(dataset, suffix=suffix, overwrite=overwrite)
+            print("Generating k-fold CV strain prediction plot...")
+            plot_kfold_cv_strain_prediction(dataset, model, suffix=suffix, overwrite=overwrite)
 
-        print("Generating leave-one-day-out CV strain prediction plot...")
-        plot_lodo_cv_strain_prediction(dataset, suffix=suffix, overwrite=overwrite)
+            print("Generating leave-one-day-out CV strain prediction plot...")
+            plot_lodo_cv_strain_prediction(dataset, model, suffix=suffix, overwrite=overwrite)
 
-        print("Generating leave-one-strain-out CV day prediction plot...")
-        plot_loso_cv_day_prediction(dataset, suffix=suffix, overwrite=overwrite)
+            print("Generating leave-one-strain-out CV day prediction plot...")
+            plot_loso_cv_day_prediction(dataset, model, suffix=suffix, overwrite=overwrite)
 
-        print("Generating leave-one-day-out CV species prediction plot...")
-        plot_lodo_cv_species_prediction(dataset, suffix=suffix, overwrite=overwrite)
+            print("Generating leave-one-day-out CV species prediction plot...")
+            plot_lodo_cv_species_prediction(dataset, model, suffix=suffix, overwrite=overwrite)
 
-        print("Generating leave-one-strain-out CV day prediction plot (wrapper)...")
-        plot_loso_cv_day_prediction_with_wrapper(dataset, suffix=suffix, overwrite=overwrite)
+            print("Generating leave-one-strain-out CV day prediction plot (wrapper)...")
+            plot_loso_cv_day_prediction_with_wrapper(
+                dataset, model, suffix=suffix, overwrite=overwrite
+            )
 
     print(f"\nAll plots saved to: {OUTPUT_DIR}")
 

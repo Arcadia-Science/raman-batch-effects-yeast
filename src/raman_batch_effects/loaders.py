@@ -428,8 +428,9 @@ class YeastDatasets:
     # A copy of the dataset used for batch correction.
     uncorrected: RamanDataset | None = None
 
-    # The batch-corrected dataset (for plate-level batch effects).
-    corrected: RamanDataset | None = None
+    # The batch-corrected datasets (for plate-level batch effects).
+    corrected_lmm: RamanDataset | None = None
+    corrected_combat: RamanDataset | None = None
 
     def construct_composite_metadata_columns(self) -> None:
         """
@@ -500,7 +501,13 @@ def load_and_process_spectra(
         datasets.uncorrected.metadata.strain != "empty-well"
     )
 
-    datasets.corrected = batch_correction.correct_batch_effects(
+    datasets.corrected_lmm = batch_correction.correct_batch_effects_lmm(
+        datasets.uncorrected,
+        batch_column="plate_id",
+        fixed_effect_column=None,
+    )
+
+    datasets.corrected_combat = batch_correction.correct_batch_effects_combat(
         datasets.uncorrected,
         batch_column="plate_id",
         fixed_effect_column=None,

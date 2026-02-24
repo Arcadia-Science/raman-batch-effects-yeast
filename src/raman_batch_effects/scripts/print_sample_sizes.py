@@ -64,7 +64,7 @@ def main(overwrite: bool = False):
 
     sections = [
         ("Raw dataset", datasets.raw),
-        ("Final corrected dataset", datasets.corrected),
+        ("Final corrected dataset", datasets.corrected_lmm),
     ]
 
     output_lines = []

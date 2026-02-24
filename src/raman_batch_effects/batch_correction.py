@@ -10,7 +10,7 @@ from tqdm import tqdm
 from raman_batch_effects.datasets import RamanDataset
 
 
-def correct_batch_effects_for_single_feature(
+def correct_batch_effects_for_single_feature_lmm(
     df: pd.DataFrame,
     feature_column: str,
     batch_column: str,
@@ -131,7 +131,7 @@ def correct_batch_effects_combat(
     return corrected_dataset
 
 
-def correct_batch_effects(
+def correct_batch_effects_lmm(
     dataset: RamanDataset,
     batch_column: str,
     fixed_effect_column: str | None = None,
@@ -167,7 +167,7 @@ def correct_batch_effects(
                 else None,
             }
         )
-        X_corrected[:, ind] = correct_batch_effects_for_single_feature(
+        X_corrected[:, ind] = correct_batch_effects_for_single_feature_lmm(
             df,
             feature_column="value",
             batch_column="batch",
