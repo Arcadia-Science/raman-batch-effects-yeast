@@ -40,30 +40,42 @@ def get_figure_mappings(output_dir: Path) -> list[tuple[Path, str]]:
         (
             output_dir
             / "plot_cross_validation"
-            / "cf--kfold-cv--strain-prediction--uncorrected.pdf",
+            / "cf--kfold-cv--strain-prediction--rf--uncorrected.pdf",
             "fig2.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
-            / "cf--lodo-cv--strain-prediction--uncorrected.pdf",
+            / "cf--lodo-cv--strain-prediction--rf--uncorrected.pdf",
             "fig3.pdf",
         ),
         (
-            output_dir / "plot_cross_validation" / "cf--loso-cv--day-prediction--uncorrected.pdf",
+            output_dir
+            / "plot_cross_validation"
+            / "cf--loso-cv--day-prediction--rf--uncorrected.pdf",
             "fig4a.pdf",
         ),
         (
-            output_dir / "plot_cross_validation" / "cf--loso-cv--day-prediction--corrected.pdf",
+            output_dir
+            / "plot_cross_validation"
+            / "cf--loso-cv--day-prediction--rf--corrected-lmm.pdf",
             "fig4b.pdf",
         ),
         (
-            output_dir / "plot_cross_validation" / "cf--lodo-cv--strain-prediction--corrected.pdf",
+            output_dir
+            / "plot_cross_validation"
+            / "cf--lodo-cv--strain-prediction--rf--corrected-lmm.pdf",
             "fig5.pdf",
         ),
         (
-            output_dir / "plot_cross_validation" / "cf--lodo-cv--species-prediction--corrected.pdf",
+            output_dir
+            / "plot_cross_validation"
+            / "cf--lodo-cv--species-prediction--rf--corrected-lmm.pdf",
             "fig6.pdf",
+        ),
+        (
+            output_dir / "aggregate_cv_metrics" / "cv_mcc_heatmap.pdf",
+            "fig7.pdf",
         ),
     ]
 
