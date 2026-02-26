@@ -60,36 +60,45 @@ def save_figure(
     filepath = Path(filepath)
     filepath.parent.mkdir(parents=True, exist_ok=True)
 
-    if not overwrite and filepath.exists():
+    # Build the list of paths to save: always the requested path,
+    # plus a PNG sibling if the requested path is a PDF.
+    paths = [filepath]
+    if filepath.suffix.lower() == ".pdf":
+        paths.append(filepath.with_suffix(".png"))
+
+    all_exist = all(p.exists() for p in paths)
+    if not overwrite and all_exist:
         if verbose:
-            print(f"Skipping '{filepath}' (already exists)")
+            print(f"Skipping '{filepath.stem}' (already exists)")
         plt.close()
         return
 
-    # Set DPI based on file extension if not explicitly provided
-    if dpi is None:
-        if filepath.suffix.lower() == ".pdf":
-            dpi = 150  # Lower DPI for vector PDFs to reduce file size
+    for path in paths:
+        # Set DPI based on file extension if not explicitly provided
+        file_dpi = dpi
+        if file_dpi is None:
+            if path.suffix.lower() == ".pdf":
+                file_dpi = 150  # Lower DPI for vector PDFs to reduce file size
+            else:
+                file_dpi = 300  # Higher DPI for raster formats (PNG, JPG, etc.)
+
+        # For PDFs, use settings that optimize for vector output
+        if path.suffix.lower() == ".pdf":
+            plt.savefig(
+                path,
+                dpi=file_dpi,
+                bbox_inches=bbox_inches,
+                facecolor="white",
+                format="pdf",
+                metadata={"Creator": "matplotlib", "Producer": "matplotlib"},
+            )
         else:
-            dpi = 300  # Higher DPI for raster formats (PNG, JPG, etc.)
+            plt.savefig(path, dpi=file_dpi, bbox_inches=bbox_inches, facecolor="white")
 
-    # For PDFs, use settings that optimize for vector output
-    if filepath.suffix.lower() == ".pdf":
-        # Use TrueType fonts for better compatibility and smaller file size
-        plt.savefig(
-            filepath,
-            dpi=dpi,
-            bbox_inches=bbox_inches,
-            facecolor="white",
-            format="pdf",
-            metadata={"Creator": "matplotlib", "Producer": "matplotlib"},
-        )
-    else:
-        plt.savefig(filepath, dpi=dpi, bbox_inches=bbox_inches, facecolor="white")
+        if verbose:
+            print(f"  Saved '{path.name}'")
+
     plt.close()
-
-    if verbose:
-        print(f"Saved figure to '{filepath}'")
 
 
 def find_repo_root() -> Path:

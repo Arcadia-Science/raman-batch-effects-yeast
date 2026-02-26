@@ -202,14 +202,14 @@ def main():
         for j, ck in enumerate(col_keys):
             text = pivot_plot.get((rk, ck), "")
             if text:
-                ax.text(j, i, text, ha="center", va="center", fontsize=8, color="black")
+                ax.text(j, i, text, ha="center", va="center", fontsize=11, color="black")
 
     ax.set_xticks(np.arange(n_cols))
     ax.set_yticks(np.arange(n_rows))
     ax.set_xticklabels(
-        [TASK_LABELS.get(ck, ck) for ck in col_keys], rotation=45, ha="right", fontsize=9
+        [TASK_LABELS.get(ck, ck) for ck in col_keys], rotation=45, ha="right", fontsize=12
     )
-    ax.set_yticklabels([VARIANT_LABELS.get(rk, rk) for rk in row_keys], fontsize=9)
+    ax.set_yticklabels([VARIANT_LABELS.get(rk, rk) for rk in row_keys], fontsize=12)
     ax.set_xlim(-0.5, n_cols - 0.5)
     ax.set_ylim(-0.5, n_rows - 0.5)
     ax.invert_yaxis()
