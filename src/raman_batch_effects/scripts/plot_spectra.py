@@ -177,8 +177,6 @@ def main(overwrite: bool = False):
             available_strains_date = set(labels_date.strain.unique())
             ordered_strains = [s for s in STRAIN_ORDER if s in available_strains_date]
             for strain, color in zip(ordered_strains, colors, strict=False):
-                if strain == "YPD":
-                    continue
                 mask = (labels_date.strain == strain) & (labels_date.day == day)
                 if mask.sum() == 0:
                     continue

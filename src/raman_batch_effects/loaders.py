@@ -177,7 +177,6 @@ def subtract_background_spectra(
     Arguments:
         dataset: RamanDataset containing spectra to correct.
         background_dataset: RamanDataset containing background spectra.
-        mean_center: If True, mean-center background spectra before averaging.
 
     Returns:
         New RamanDataset with background-subtracted spectra.

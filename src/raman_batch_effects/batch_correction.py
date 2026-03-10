@@ -31,7 +31,7 @@ def correct_batch_effects_for_single_feature_lmm(
     batch-specific biases (or offsets). To crudely correct for batch-specific scales,
     we then scale the residuals by the within-batch standard deviation.
 
-    We use a naive estimate of the within-batchstandard deviation (i.e. without shrinkage),
+    We use a naive estimate of the within-batch standard deviation (i.e. without shrinkage),
     so this method assumes that there are no small batches or batches with very little variation.
 
     Args:

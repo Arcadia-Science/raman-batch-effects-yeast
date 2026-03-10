@@ -61,16 +61,6 @@ This script generates plots of the raw and processed spectra, grouped by strain 
 uv run python -m raman_batch_effects.scripts.plot_spectra
 ```
 
-**`plot_embeddings`** 
-
-TODO: should we remove this script?
-
-This script plots PCA and UMAP embeddings of spectra, colored by strain, species, and day. These plots were ***not*** included in the pub.
-
-```bash
-uv run python -m raman_batch_effects.scripts.plot_embeddings
-```
-
 **`plot_cross_validation`** 
 
 This script plots confusion matrices for all prediction tasks and cross-validation strategies. Each plot is generated for two models (random forest and SVC) and three versions of the dataset (uncorrected, LMM-corrected, and ComBat-corrected). Per-fold performance metrics are saved as YAML files alongside the plots. A subset of these plots were used for Figures 2-6 of the pub.
@@ -94,7 +84,3 @@ All plotting scripts accept the following flags:
 - `--overwrite` — Overwrite existing output files (by default, existing files are skipped).
 - `--reset` — Remove the target output directory before running.
 - `--clear` — Clear the joblib cache before running.
-
-## License
-
-TODO: Add license.
