@@ -7,6 +7,7 @@ name = "raman_batch_effects"
 version = "0.1.0"
 description = "Batch effects in Raman spectroscopy of yeast cultures"
 readme = "README.md"
+license = {file = "LICENSE"}
 requires-python = "==3.12.*"
 dependencies = [
     "arcadia-pycolor==0.6.4",
