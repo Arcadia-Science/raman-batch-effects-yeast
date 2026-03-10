@@ -10,10 +10,6 @@ from raman_batch_effects.cache import cache
 from raman_batch_effects.datasets import RamanDataset
 from raman_batch_effects.utils import get_data_dirpath
 
-PLATEMAP_FILEPATH_NOVEMBER_2025 = (
-    get_data_dirpath() / "november-2025-platemaps" / "2025-11-14-yeast_raman_3_days_plate_map.csv"
-)
-
 PLATEMAP_FILEPATHS_AUGUST_2025 = {
     1: get_data_dirpath() / "august-2025-platemaps" / "08-06_yeast-mutants.csv",
     2: get_data_dirpath() / "august-2025-platemaps" / "08-07_yeast-mutants.csv",
@@ -24,12 +20,6 @@ SUBDIRECTORY_NAMES_AUGUST_2025 = {
     1: "2025-08-06",
     2: "2025-08-07",
     3: "2025-08-12",
-}
-
-SUBDIRECTORY_NAMES_NOVEMBER_2025 = {
-    1: "2025-11-11_yeast_raman_day1",
-    2: "2025-11-12_yeast_raman_day2",
-    3: "2025-11-13_yeast_raman_day3",
 }
 
 
@@ -90,7 +80,7 @@ def load_platemap_august_2025() -> pd.DataFrame:
 @cache.cache()
 def load_yeast_spectra(data_dirpath: str | Path) -> RamanDataset:
     """
-    Load yeast Raman spectra from August and/or November 2025 acquisitions.
+    Load yeast Raman spectra from August 2025 acquisitions.
 
     Arguments:
         data_dirpath: Path to the root data directory containing acquisition subdirectories.
@@ -181,9 +171,8 @@ def subtract_background_spectra(
     """
     Subtract acquisition-specific consensus background spectra from all spectra.
 
-    For each acquisition (august-2025, november-2025), computes a consensus background
-    spectrum from the backgrounds for that acquisition, then subtracts it from all
-    spectra from that acquisition.
+    For each dataset date (e.g. 'august-2025'), we compute a consensus background
+    spectrum from the backgrounds for that date, then subtract it from all spectra from that date.
 
     Arguments:
         dataset: RamanDataset containing spectra to correct.

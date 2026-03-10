@@ -58,7 +58,7 @@ def plot_embedding_grid(
     """
     Plot 2D embeddings for different dates colored by different variables in a 2D subplot grid.
 
-    Rows of the subplot grid correspond to dates (august-2025, november-2025).
+    Rows of the subplot grid correspond to dates (e.g. 'august-2025').
     Columns of the subplot grid correspond to coloring variables.
 
     Arguments:
@@ -161,7 +161,7 @@ def main(overwrite: bool = False):
     colored by different variables.
 
     The results are visualized as a 2D subplot grid where:
-    - Rows correspond to dates (august-2025, november-2025)
+    - Rows correspond to dates (e.g. 'august-2025')
     - Columns correspond to coloring variables (metadata columns)
 
     Creates separate PNG files for UMAP and PCA embeddings, for both

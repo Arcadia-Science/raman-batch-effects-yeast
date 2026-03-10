@@ -11,10 +11,19 @@ Most of the code in this repo was written using [Claude Code](https://claude.com
 ## Repository structure
 
 ```text
-data/                            # Location of raw data (unzipped using `make unzip-data`).
-output/                          # Location of generated figures and summary tables.
+data/                             # Location of the raw data.
+output/                           # Location of generated figures and summary tables.
 src/raman_batch_effects/          # Python package source.
+data.zip                          # Raw spectral data and metadata.
 ```
+
+The `/data` and `/output` directories are not included in this repo. The `/data` directory is created by unzipping the `data.zip` file using `make unzip-data` and the `/output` directory is created by running the scripts in this repo (see below).
+
+## Data
+
+The raw spectral data and metadata are stored in the `data.zip` file. This file is included in this repo. After cloning this repo, unzip the file using `make unzip-data`. This will create the `/data` directory. 
+
+This directory contains the raw spectral data (in CSV format) and metadata (as platemaps, also in CSV format). For details about the structure of the data, refer to the code that loads the data in [src/raman_batch_effects/loaders.py](src/raman_batch_effects/loaders.py).
 
 ## Setup
 
