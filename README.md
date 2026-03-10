@@ -1,6 +1,6 @@
-# Batch Effects in Raman Spectroscopy of Yeast
+# Batch effects in Raman spectroscopy of yeast cultures
 
-This repository contains the code accompanying the 2026 pub entitled [*Cross-validation reveals strong batch effects in Raman spectra of biological samples*](https://doi.org/10.57844/arcadia-xdmk-yq0w).
+This repository contains the code accompanying the 2026 pub entitled ["Cross-validation reveals strong batch effects in Raman spectra of biological samples"](https://doi.org/10.57844/arcadia-xdmk-yq0w).
 
 The code is organized as a Python package called `raman_batch_effects`.
 
@@ -41,7 +41,7 @@ Then unzip the raw data:
 make unzip-data
 ```
 
-This will unzip the data into the `data/` directory. The size of the unzipped data is tiny (40MB).
+This will unzip the data into the `data/` directory. The size of the unzipped data is 40MB.
 
 After this, you should be able to run the scripts to generate the figures and results shown in the pub (see below).
 
