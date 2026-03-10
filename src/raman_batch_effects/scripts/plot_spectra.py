@@ -7,7 +7,12 @@ import matplotlib.pyplot as plt
 
 from raman_batch_effects import loaders, utils
 from raman_batch_effects.cache import cache
-from raman_batch_effects.scripts.config import YeastConfig, get_output_dir
+from raman_batch_effects.scripts.config import (
+    STRAIN_DISPLAY_NAMES,
+    STRAIN_ORDER,
+    YeastConfig,
+    get_output_dir,
+)
 
 apc.mpl.setup()
 
@@ -31,11 +36,14 @@ def plot_mean_spectra_by_strain_and_species(dataset, date: str, overwrite: bool 
     """
     X, labels = dataset.filter(date=date).to_matrix()
 
-    # Identify cerevisiae and pombe strains
+    # Identify cerevisiae and pombe strains, ordered by STRAIN_ORDER.
+    available_strains = set(labels.strain.unique())
     cerevisiae_strains = []
     pombe_strains = []
 
-    for strain in sorted(labels.strain.unique()):
+    for strain in STRAIN_ORDER:
+        if strain not in available_strains:
+            continue
         strain_species = labels[labels.strain == strain].species.iloc[0].lower()
         if "cerevisiae" in strain_species:
             cerevisiae_strains.append(strain)
@@ -58,7 +66,7 @@ def plot_mean_spectra_by_strain_and_species(dataset, date: str, overwrite: bool 
         ax.plot(
             dataset.wavenumbers,
             X_masked.mean(axis=0),
-            label=strain,
+            label=STRAIN_DISPLAY_NAMES.get(strain, strain),
             lw=1.5,
             alpha=0.9,
             color=color,
@@ -66,7 +74,7 @@ def plot_mean_spectra_by_strain_and_species(dataset, date: str, overwrite: bool 
 
     ax.legend(loc="upper right", fontsize=11, framealpha=0.9)
     ax.set_ylabel("Intensity (a.u.)", fontsize=12)
-    ax.set_title("Mean spectra by strain  |  S. cerevisiae  |  All days", fontsize=13)
+    ax.set_title("Mean spectra by strain  |  S. cerevisiae  |  All plates", fontsize=13)
     apc.mpl.style_plot(ax, monospaced_axes="both")
 
     # Plot pombe strains in bottom panel
@@ -79,7 +87,7 @@ def plot_mean_spectra_by_strain_and_species(dataset, date: str, overwrite: bool 
         ax.plot(
             dataset.wavenumbers,
             X_masked.mean(axis=0),
-            label=strain,
+            label=STRAIN_DISPLAY_NAMES.get(strain, strain),
             lw=1.5,
             alpha=0.9,
             color=color,
@@ -88,7 +96,7 @@ def plot_mean_spectra_by_strain_and_species(dataset, date: str, overwrite: bool 
     ax.legend(loc="upper right", fontsize=11, framealpha=0.9)
     ax.set_xlabel("Raman shift (cm$^{-1}$)", fontsize=12)
     ax.set_ylabel("Intensity (a.u.)", fontsize=12)
-    ax.set_title("Mean spectra by strain  |  S. pombe  |  All days", fontsize=13)
+    ax.set_title("Mean spectra by strain  |  S. pombe  |  All plates", fontsize=13)
     apc.mpl.style_plot(ax, monospaced_axes="both")
 
     plt.tight_layout()
@@ -117,7 +125,8 @@ def main(overwrite: bool = False):
 
     # Plot all spectra in a grid of subplots with strains in rows and days in columns.
     X, labels = clean_dataset.filter(date=date_to_plot).to_matrix()
-    strains = sorted(labels.strain.unique())
+    available_strains = set(labels.strain.unique())
+    strains = [s for s in STRAIN_ORDER if s in available_strains]
     num_strains = len(strains)
 
     _fig, axs = plt.subplots(num_strains, 3, figsize=(16, num_strains * 2))
@@ -130,7 +139,7 @@ def main(overwrite: bool = False):
             mask = (labels.strain == strain) & (labels.day == day)
             for row in X[mask]:
                 ax.plot(row, color="k", alpha=0.1, lw=0.5)
-            ax.set_title(f"{strain}  |  day{day}", fontsize=10)
+            ax.set_title(f"{STRAIN_DISPLAY_NAMES.get(strain, strain)}  |  plate{day}", fontsize=10)
 
             if ind == num_strains - 1:
                 ax.set_xlabel("Wavenumber index", fontsize=10)
@@ -165,7 +174,9 @@ def main(overwrite: bool = False):
             X_date, labels_date = date_dataset.to_matrix()
 
             colors = apc.palettes.all_palettes[4]
-            for strain, color in zip(sorted(labels_date.strain.unique()), colors, strict=False):
+            available_strains_date = set(labels_date.strain.unique())
+            ordered_strains = [s for s in STRAIN_ORDER if s in available_strains_date]
+            for strain, color in zip(ordered_strains, colors, strict=False):
                 if strain == "YPD":
                     continue
                 mask = (labels_date.strain == strain) & (labels_date.day == day)
@@ -175,7 +186,7 @@ def main(overwrite: bool = False):
                 ax.plot(
                     clean_dataset.wavenumbers,
                     X_masked.mean(axis=0),
-                    label=strain,
+                    label=STRAIN_DISPLAY_NAMES.get(strain, strain),
                     lw=1,
                     alpha=1,
                     color=color,
@@ -184,7 +195,7 @@ def main(overwrite: bool = False):
             ax.legend(loc="upper right", fontsize=10, bbox_to_anchor=(1.15, 1))
             ax.set_xlabel("Raman shift (cm$^{-1}$)")
             ax.set_ylabel("Intensity (a.u.)")
-            ax.set_title(f"Mean spectra  |  Day {day}  |  {date}")
+            ax.set_title(f"Mean spectra  |  Plate {day}  |  {date}")
             apc.mpl.style_plot(ax, monospaced_axes="both")
 
         plt.tight_layout()

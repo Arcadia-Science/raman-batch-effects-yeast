@@ -16,6 +16,7 @@ from raman_batch_effects.cross_validation import (
     calc_confusion_matrix_lobo,
 )
 from raman_batch_effects.scripts import config
+from raman_batch_effects.scripts.config import STRAIN_DISPLAY_NAMES, STRAIN_ORDER
 
 apc.mpl.setup()
 
@@ -23,21 +24,6 @@ CONFIG = config.YeastConfig()
 OUTPUT_DIR = config.get_output_dir(Path(__file__).stem)
 
 AUGUST_2025 = "august-2025"
-
-# Manually-curated order for displaying confusion matrices.
-STRAIN_ORDER = [
-    # cerevisiae strains
-    "BY4741",
-    "YGL058",
-    "YNL141",
-    # pombe strains
-    "SP286",
-    "ED666",
-    "RAD6",
-    "PDF1",
-    "DEA2",
-    "ARSG",
-]
 
 
 def _format_metrics_report(
@@ -107,9 +93,14 @@ def plot_kfold_cv_strain_prediction(dataset, model, suffix: str = "", overwrite:
     unique_strains = [label.split("-")[1] for label in cv_results.unique_labels]
     sort_order = [unique_strains.index(strain) for strain in STRAIN_ORDER]
 
+    display_labels = [
+        STRAIN_DISPLAY_NAMES.get(unique_strains[ind], unique_strains[ind])
+        for ind in sort_order
+    ]
+
     plotting.plot_confusion_matrix(
         cv_results.confusion_matrix[np.ix_(sort_order, sort_order)],
-        [cv_results.unique_labels[ind] for ind in sort_order],
+        display_labels,
         figsize=(12, 10),
         show_cell_counts=False,
         cmap=mpl.cm.Blues,
@@ -153,9 +144,14 @@ def plot_lodo_cv_strain_prediction(dataset, model, suffix: str = "", overwrite: 
     unique_strains = [label.split("-")[1] for label in cv_results.unique_labels]
     sort_order = [unique_strains.index(strain) for strain in STRAIN_ORDER]
 
+    display_labels = [
+        STRAIN_DISPLAY_NAMES.get(unique_strains[ind], unique_strains[ind])
+        for ind in sort_order
+    ]
+
     plotting.plot_confusion_matrix(
         cv_results.confusion_matrix[np.ix_(sort_order, sort_order)],
-        [cv_results.unique_labels[ind] for ind in sort_order],
+        display_labels,
         figsize=(12, 10),
         show_cell_counts=False,
         cmap=mpl.cm.Blues,

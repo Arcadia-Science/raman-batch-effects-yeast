@@ -55,9 +55,6 @@ def parse_open_raman_file(file_path: str | Path) -> ramanspy.Spectrum:
 
 
 def get_preprocessing_pipeline() -> ramanspy.preprocessing.Pipeline:
-    """
-    Get the preprocessing pipeline used for all spectra.
-    """
     return ramanspy.preprocessing.Pipeline(
         [
             # Crop to 300 cm⁻¹ to eliminate the sharp shoulder at low wavenumbers.
@@ -68,9 +65,6 @@ def get_preprocessing_pipeline() -> ramanspy.preprocessing.Pipeline:
 
 
 def _remove_zero_padding_from_well_id(well_id: str) -> str:
-    """
-    Remove zero padding from a well ID.
-    """
     row, column = well_id[0], int(well_id[1:])
     return f"{row}{column}"
 
@@ -89,64 +83,6 @@ def load_platemap_august_2025() -> pd.DataFrame:
     platemap = pd.concat(platemaps)
 
     platemap["well_id"] = platemap["well_id"].apply(_remove_zero_padding_from_well_id)
-
-    return platemap
-
-
-def load_platemap_november_2025() -> pd.DataFrame:
-    """
-    Load the platemap for the yeast dataset from November 2025.
-    """
-    platemap = pd.read_csv(PLATEMAP_FILEPATH_NOVEMBER_2025)
-
-    platemap.rename(
-        columns={
-            "Well": "well_id",
-            "Day 1": "day_1",
-            "Day 2": "day_2",
-            "Day 3": "day_3",
-        },
-        inplace=True,
-    )
-
-    platemap = platemap[["well_id", "day_1", "day_2", "day_3"]]
-
-    # Remove parentheses from strain names.
-    for day in ["day_1", "day_2", "day_3"]:
-        platemap[day] = platemap[day].str.split(" ").str[0]
-
-    # HACK: Add back the (ts) appendix to the one temperature-sensitive strain.
-    platemap = platemap.map(lambda x: x + " (ts)" if x == "sec6" else x)
-
-    # Check that each day has the same number of strains.
-    for day in ["day_1", "day_2", "day_3"]:
-        for other_day in ["day_1", "day_2", "day_3"]:
-            if other_day == day:
-                continue
-            if platemap[day].nunique() != platemap[other_day].nunique():
-                raise ValueError(
-                    f"{day} has {platemap[day].nunique()} strains, "
-                    f"but {other_day} has {platemap[other_day].nunique()} strains."
-                )
-
-    # Flatten the platemap into a single dataframe with a "day" column.
-    day_platemaps = []
-    for day in [1, 2, 3]:
-        day_platemap = platemap[["well_id", f"day_{day}"]].copy()
-        day_platemap["day"] = day
-        day_platemap.rename(columns={f"day_{day}": "strain"}, inplace=True)
-        day_platemaps.append(day_platemap)
-
-    platemap = pd.concat(day_platemaps)
-
-    # Add rows for empty-well controls (always well A5), as these are not in the original platemap.
-    empty_wells = pd.DataFrame(
-        {"well_id": ["A5"] * 3, "day": [1, 2, 3], "strain": ["empty-well"] * 3}
-    )
-    platemap = pd.concat([platemap, empty_wells])
-
-    # Add species column (not in original platemap but needed for consistency)
-    platemap["species"] = "yeast"
 
     return platemap
 
@@ -170,7 +106,6 @@ def load_yeast_spectra(data_dirpath: str | Path) -> RamanDataset:
     data_dirpath = Path(data_dirpath)
 
     dataset = RamanDataset()
-
     platemap_august = load_platemap_august_2025()
 
     for day in tqdm([1, 2, 3], desc="Loading August 2025"):
@@ -209,46 +144,6 @@ def load_yeast_spectra(data_dirpath: str | Path) -> RamanDataset:
 
     return dataset
 
-    # TODO: remove the code below if we decide not to use the November 2025 dataset.
-    platemap_november = load_platemap_november_2025()
-
-    for day in tqdm([1, 2, 3], desc="Loading November 2025"):
-        subdirectory_path = (
-            data_dirpath / SUBDIRECTORY_NAMES_NOVEMBER_2025[day] / f"spectra_day{day}"
-        )
-
-        if not subdirectory_path.exists():
-            print(f"Warning: directory not found: {subdirectory_path}")
-            continue
-
-        for filepath in subdirectory_path.glob("*.csv"):
-            well_id = filepath.name.split("-")[0]
-
-            platemap_row = platemap_november.loc[
-                (platemap_november.well_id == well_id) & (platemap_november.day == day)
-            ]
-
-            if platemap_row.empty:
-                print(f"Warning: well {well_id} on day {day} not found in November platemap")
-                continue
-
-            platemap_row = platemap_row.iloc[0]
-
-            spectrum = parse_open_raman_file(filepath)
-            spectrum = get_preprocessing_pipeline().apply(spectrum)
-
-            dataset.add_spectrum(
-                spectrum,
-                date="november-2025",
-                day=day,
-                well_id=well_id,
-                strain=platemap_row.strain,
-                species=platemap_row.species,
-                filepath=str(filepath),
-            )
-
-    return dataset
-
 
 @cache.cache()
 def load_background_spectra(data_dirpath: str | Path) -> RamanDataset:
@@ -276,18 +171,6 @@ def load_background_spectra(data_dirpath: str | Path) -> RamanDataset:
         spectrum = parse_open_raman_file(filepath)
         spectrum = get_preprocessing_pipeline().apply(spectrum)
         dataset.add_spectrum(spectrum, date="august-2025", day=day)
-
-    # TODO: remove the code below if we decide not to use the November 2025 dataset.
-    for day in [1, 2, 3]:
-        filepath = data_dirpath / SUBDIRECTORY_NAMES_NOVEMBER_2025[day] / "SS" / "Default.csv"
-
-        if not filepath.exists():
-            print(f"Warning: background file not found: {filepath}")
-            continue
-
-        spectrum = parse_open_raman_file(filepath)
-        spectrum = get_preprocessing_pipeline().apply(spectrum)
-        dataset.add_spectrum(spectrum, date="november-2025", day=day)
 
     return dataset
 

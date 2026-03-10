@@ -167,6 +167,7 @@ def plot_confusion_matrix(
                 va="center",
                 color="black",
                 fontsize=10,
+                fontfamily="Suisse Int'l Mono",
             )
 
     # Set ticks at cell centers for pcolormesh
@@ -249,6 +250,7 @@ def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None
                     va="center",
                     color="white" if cm[i, j] > thresh else "black",
                     fontsize=10,
+                    fontfamily="Suisse Int'l Mono",
                 )
 
     # Hide unused subplots

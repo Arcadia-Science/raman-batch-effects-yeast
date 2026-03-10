@@ -178,7 +178,7 @@ def main():
             if val is not None:
                 data[i, j] = val
 
-    cmap = (apc.gradients.reds + apc.gradients.greens.reverse()).to_mpl_cmap()
+    cmap = (apc.gradients.purple_green).to_mpl_cmap()
 
     fig, ax = plt.subplots(figsize=(len(col_keys) * 2.8 + 2, len(row_keys) * 0.8 + 1.5))
 
@@ -202,7 +202,16 @@ def main():
         for j, ck in enumerate(col_keys):
             text = pivot_plot.get((rk, ck), "")
             if text:
-                ax.text(j, i, text, ha="center", va="center", fontsize=11, color="black")
+                ax.text(
+                    j,
+                    i,
+                    text,
+                    ha="center",
+                    va="center",
+                    fontsize=11,
+                    fontfamily="Suisse Int'l Mono",
+                    color="black",
+                )
 
     ax.set_xticks(np.arange(n_cols))
     ax.set_yticks(np.arange(n_rows))

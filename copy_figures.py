@@ -35,47 +35,47 @@ def get_figure_mappings(output_dir: Path) -> list[tuple[Path, str]]:
     return [
         (
             output_dir / "plot_spectra" / "mean-spectra-by-strain-by-species--august-2025.pdf",
-            "fig1.pdf",
+            "mean-spectra.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--kfold-cv--strain-prediction--rf--uncorrected.pdf",
-            "fig2.pdf",
+            "cf-kfold-strain.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--lodo-cv--strain-prediction--rf--uncorrected.pdf",
-            "fig3.pdf",
+            "cf-lodo-strain-uncorrected.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--loso-cv--day-prediction--rf--uncorrected.pdf",
-            "fig4a.pdf",
+            "cf-loso-plate-panel-a-uncorrected.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--loso-cv--day-prediction--rf--corrected-lmm.pdf",
-            "fig4b.pdf",
+            "cf-loso-plate-panel-b-corrected.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--lodo-cv--strain-prediction--rf--corrected-lmm.pdf",
-            "fig5.pdf",
+            "cf-lodo-strain-corrected.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--lodo-cv--species-prediction--rf--corrected-lmm.pdf",
-            "fig6.pdf",
+            "roc-lodo-species-corrected.pdf",
         ),
         (
             output_dir / "aggregate_cv_metrics" / "cv_mcc_heatmap.pdf",
-            "fig7.pdf",
+            "cv-mcc-heatmap.pdf",
         ),
     ]
 
