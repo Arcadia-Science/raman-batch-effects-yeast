@@ -30,10 +30,6 @@ GDRIVE_FIGS_FOLDER_ID = 1TM-OurInS0BSn6DM404chWaMnpCSJgVX
 # Manually set the ID of the Google Docs document to import.
 GDRIVE_DOC_ID = 1uyDDqF-pRwffHfJm9eHOo19cOZmrJeOpp7eWDHQm1-Y
 
-.PHONY: sync-figs
-sync-figs:
-	rclone sync figs/ $(GDRIVE_REMOTE):{$(GDRIVE_FIGS_FOLDER_ID)} -v
-
 .PHONY: import-doc
 import-doc:
 	@echo "Downloading Google Doc as docx..."
