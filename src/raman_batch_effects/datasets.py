@@ -56,8 +56,6 @@ class RamanDataset:
         Raises:
             ValueError: If a spectrum with identical metadata already exists, or if
                 wavenumbers don't match existing spectra.
-
-        TODO: add a way to define the metadata schema so we can validate the kwargs.
         """
         if self._spectra and not np.array_equal(spectrum.spectral_axis, self.wavenumbers):
             raise ValueError("Spectrum wavenumbers don't match existing spectra")
@@ -195,8 +193,6 @@ class RamanDataset:
         Examples:
             dataset.filter(line="mCherry")  # exact match
             dataset.filter(strain=lambda x: x.lower().startswith("cdc"))  # prefix match
-
-        TODO: Consider implementing this in subclasses, as its logic may be dataset-specific.
         """
         mask = pd.Series(True, index=self.metadata.index)
         for key, value in kwargs.items():
