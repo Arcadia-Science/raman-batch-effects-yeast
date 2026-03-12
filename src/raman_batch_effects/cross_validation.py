@@ -67,7 +67,7 @@ def _per_fold_ovr_mcc(y_true, y_pred, unique_labels):
         y_true_binary = (np.asarray(y_true) == label).astype(int)
         y_pred_binary = (np.asarray(y_pred) == label).astype(int)
         # MCC is undefined if either column is constant — skip those classes.
-        if len(np.unique(y_true_binary)) < 2 and len(np.unique(y_pred_binary)) < 2:
+        if len(np.unique(y_true_binary)) < 2 or len(np.unique(y_pred_binary)) < 2:
             continue
         mccs.append(matthews_corrcoef(y_true_binary, y_pred_binary))
     if not mccs:
@@ -93,7 +93,7 @@ def _per_fold_ovr_auc(y_true, y_proba, unique_labels):
         return None
 
 
-# Named tuples for worker function results
+# Named tuples for worker function results.
 RocFoldResult = namedtuple(
     "RocFoldResult",
     ["y_true", "probas", "importances"],

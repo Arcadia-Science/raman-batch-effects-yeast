@@ -1,5 +1,6 @@
 """
-Copy publication figures from the script output directory to figs/ directory.
+Copy the figures used in the pub from the scripts' output directory to  the `figs/` directory.
+This is for convenience and also to create an explicit record of the output files used in the pub.
 """
 
 import argparse

@@ -138,8 +138,8 @@ def plot_confusion_matrix(
 
     cm_normalized = confusion_matrix.astype("float") / confusion_matrix.sum(axis=1)[:, np.newaxis]
 
-    # Use pcolormesh instead of imshow for true vector output in PDFs
-    # pcolormesh requires mesh coordinates, so we create them
+    # Use pcolormesh instead of imshow for true vector output in PDFs.
+    # pcolormesh requires mesh coordinates, so we create them.
     x = np.arange(num_labels + 1) - 0.5
     y = np.arange(num_labels + 1) - 0.5
     X_mesh, Y_mesh = np.meshgrid(x, y)
@@ -170,7 +170,7 @@ def plot_confusion_matrix(
                 fontfamily="Suisse Int'l Mono",
             )
 
-    # Set ticks at cell centers for pcolormesh
+    # Set ticks at cell centers for pcolormesh.
     ax.set_xticks(np.arange(num_labels))
     ax.set_yticks(np.arange(num_labels))
     ax.set_xticklabels(labels, rotation=45, ha="right")
@@ -178,11 +178,11 @@ def plot_confusion_matrix(
     ax.set_xlabel("Predicted label")
     ax.set_ylabel("True label")
 
-    # Set axis limits to show all cells properly
+    # Set axis limits to show all cells properly.
     ax.set_xlim(-0.5, num_labels - 0.5)
     ax.set_ylim(-0.5, num_labels - 0.5)
 
-    # Invert y-axis to match imshow convention (origin at top)
+    # Invert y-axis to match imshow convention (origin at top).
     ax.invert_yaxis()
 
     if show_colorbar:
@@ -194,15 +194,15 @@ def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None
     """
     Plot confusion matrices for each batch from leave-one-batch-out CV.
 
-    Args:
-        confusion_matrices: Dictionary mapping batch labels to confusion matrices
-        unique_labels: Sorted list of unique class labels
+    Arguments:
+        confusion_matrices: Dictionary mapping batch labels to confusion matrices.
+        unique_labels: Sorted list of unique class labels.
         figsize: Optional tuple (width, height) for figure size. If None, automatically determined.
-        cmap: Colormap for the heatmap
+        cmap: Colormap for the heatmap.
 
     Returns:
-        fig: matplotlib Figure object
-        axes: Array of matplotlib Axes objects
+        fig: matplotlib Figure object.
+        axes: Array of matplotlib Axes objects.
     """
 
     n_batches = len(confusion_matrices)
@@ -218,7 +218,7 @@ def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None
     for idx, (batch_label, cm) in enumerate(sorted(confusion_matrices.items())):
         ax = axes[idx]
 
-        # Plot the confusion matrix using pcolormesh for vector output
+        # Plot the confusion matrix using pcolormesh for vector output.
         n_labels = len(unique_labels)
         x = np.arange(n_labels + 1) - 0.5
         y = np.arange(n_labels + 1) - 0.5
@@ -226,19 +226,19 @@ def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None
         ax.pcolormesh(X_mesh, Y_mesh, cm, cmap=cmap, shading="flat", edgecolors="none")
         ax.set_title(f"{batch_label}", fontsize=14)
 
-        # Set tick marks at cell centers
+        # Set tick marks at cell centers.
         tick_marks = np.arange(n_labels)
         ax.set_xticks(tick_marks)
         ax.set_yticks(tick_marks)
         ax.set_xticklabels(unique_labels, rotation=45, ha="right", fontsize=12)
         ax.set_yticklabels(unique_labels, fontsize=12)
 
-        # Set axis limits and invert y-axis
+        # Set axis limits and invert y-axis.
         ax.set_xlim(-0.5, n_labels - 0.5)
         ax.set_ylim(-0.5, n_labels - 0.5)
         ax.invert_yaxis()
 
-        # Add text annotations
+        # Add text annotations.
         thresh = cm.max() / 2.0
         for i in range(cm.shape[0]):
             for j in range(cm.shape[1]):
@@ -253,11 +253,11 @@ def plot_confusion_matrices_lobo(confusion_matrices, unique_labels, figsize=None
                     fontfamily="Suisse Int'l Mono",
                 )
 
-    # Hide unused subplots
+    # Hide unused subplots.
     for idx in range(n_batches, len(axes)):
         axes[idx].axis("off")
 
-    # Hide axis labels on all but the first plot
+    # Hide axis labels on all but the first plot.
     for idx in range(n_batches):
         if idx != 0:
             axes[idx].set_ylabel("")

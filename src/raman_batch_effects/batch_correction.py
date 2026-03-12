@@ -135,7 +135,6 @@ def correct_batch_effects_lmm(
     dataset: RamanDataset,
     batch_column: str,
     fixed_effect_column: str | None = None,
-    shuffle: bool = False,
 ) -> RamanDataset:
     """
     Correct batch effects for a RamanDataset using linear mixed models.
@@ -150,9 +149,6 @@ def correct_batch_effects_lmm(
         A new RamanDataset with batch-corrected spectra and the same metadata as the input.
     """
     X, labels = dataset.to_matrix()
-
-    if shuffle:
-        X = X[np.random.permutation(X.shape[0])]
 
     # Matrix of corrected spectra.
     X_corrected = np.zeros_like(X)

@@ -11,7 +11,7 @@ def lighten_hex_color(hex_color: str, amount: float = 0.3) -> str:
     # Convert to HLS to modify lightness
     hue, lightness, saturation = colorsys.rgb_to_hls(red, green, blue)
 
-    # increase lightness toward white
+    # Increase lightness toward white.
     lightness = 1 - (1 - lightness) * (1 - amount)
 
     red, green, blue = colorsys.hls_to_rgb(hue, lightness, saturation)
@@ -26,7 +26,7 @@ def darken_hex_color(hex_color: str, amount: float = 0.3) -> str:
     # Convert to HLS to modify lightness
     hue, lightness, saturation = colorsys.rgb_to_hls(red, green, blue)
 
-    # decrease lightness toward black
+    # Decrease lightness toward black.
     lightness = lightness * (1 - amount)
 
     red, green, blue = colorsys.hls_to_rgb(hue, lightness, saturation)

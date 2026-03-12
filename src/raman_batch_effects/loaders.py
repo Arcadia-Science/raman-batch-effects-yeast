@@ -108,7 +108,7 @@ def load_yeast_spectra(data_dirpath: str | Path) -> RamanDataset:
         for filepath in subdirectory_path.glob("*.csv"):
             well_id = filepath.name.split("-")[0]
 
-            # Look up metadata from platemap
+            # Look up metadata from platemap.
             platemap_row = platemap_august.loc[
                 (platemap_august.well_id == well_id) & (platemap_august.day == day)
             ]
@@ -332,7 +332,7 @@ def load_and_process_spectra(
     )
 
     # Remove dim spectra.
-    # # Note: it is important to do this *before* identifying outliers,
+    # Note: it is important to do this before identifying outliers,
     # as dim spectra diminish the effectiveness of the outlier identification algorithm.
     processed_dataset = identify_dim_spectra(
         processed_dataset, background_subtracted_dataset, threshold=1000.0
