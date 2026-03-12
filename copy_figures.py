@@ -37,6 +37,7 @@ def get_figure_mappings(output_dir: Path) -> list[tuple[Path, str]]:
             output_dir / "plot_spectra" / "mean-spectra-by-strain-by-species--august-2025.pdf",
             "mean-spectra.pdf",
         ),
+        # Confusion matrices for strain prediction.
         (
             output_dir
             / "plot_cross_validation"
@@ -52,6 +53,13 @@ def get_figure_mappings(output_dir: Path) -> list[tuple[Path, str]]:
         (
             output_dir
             / "plot_cross_validation"
+            / "cf--lodo-cv--strain-prediction--rf--corrected-lmm.pdf",
+            "cf-lodo-strain-corrected.pdf",
+        ),
+        # Confusion matrices for day prediction.
+        (
+            output_dir
+            / "plot_cross_validation"
             / "cf--loso-cv--day-prediction--rf--uncorrected.pdf",
             "cf-loso-plate-panel-a-uncorrected.pdf",
         ),
@@ -61,18 +69,27 @@ def get_figure_mappings(output_dir: Path) -> list[tuple[Path, str]]:
             / "cf--loso-cv--day-prediction--rf--corrected-lmm.pdf",
             "cf-loso-plate-panel-b-corrected.pdf",
         ),
+        # Confusion matrices for species prediction.
         (
             output_dir
             / "plot_cross_validation"
-            / "cf--lodo-cv--strain-prediction--rf--corrected-lmm.pdf",
-            "cf-lodo-strain-corrected.pdf",
+            / "cf--lodo-cv--species-prediction--rf--uncorrected.pdf",
+            "cf-lodo-species-panel-a-uncorrected.pdf",
         ),
         (
             output_dir
             / "plot_cross_validation"
             / "cf--lodo-cv--species-prediction--rf--corrected-lmm.pdf",
-            "roc-lodo-species-corrected.pdf",
+            "cf-lodo-species-panel-b-corrected.pdf",
         ),
+        # ROC curve and feature importances for species prediction.
+        (
+            output_dir
+            / "plot_cross_validation"
+            / "cf--lodo-cv--species-prediction-roc-curve--rf--corrected-lmm.pdf",
+            "cf-lodo-species-corrected-feature-importances.pdf",
+        ),
+        # Summary heatmap of MCC values.
         (
             output_dir / "aggregate_cv_metrics" / "cv_mcc_heatmap.pdf",
             "cv-mcc-heatmap.pdf",

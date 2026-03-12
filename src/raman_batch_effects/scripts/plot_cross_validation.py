@@ -94,8 +94,7 @@ def plot_kfold_cv_strain_prediction(dataset, model, suffix: str = "", overwrite:
     sort_order = [unique_strains.index(strain) for strain in STRAIN_ORDER]
 
     display_labels = [
-        STRAIN_DISPLAY_NAMES.get(unique_strains[ind], unique_strains[ind])
-        for ind in sort_order
+        STRAIN_DISPLAY_NAMES.get(unique_strains[ind], unique_strains[ind]) for ind in sort_order
     ]
 
     plotting.plot_confusion_matrix(
@@ -145,8 +144,7 @@ def plot_lodo_cv_strain_prediction(dataset, model, suffix: str = "", overwrite: 
     sort_order = [unique_strains.index(strain) for strain in STRAIN_ORDER]
 
     display_labels = [
-        STRAIN_DISPLAY_NAMES.get(unique_strains[ind], unique_strains[ind])
-        for ind in sort_order
+        STRAIN_DISPLAY_NAMES.get(unique_strains[ind], unique_strains[ind]) for ind in sort_order
     ]
 
     plotting.plot_confusion_matrix(
@@ -221,12 +219,13 @@ def plot_loso_cv_day_prediction(dataset, model, suffix: str = "", overwrite: boo
 
 def plot_lodo_cv_species_prediction(dataset, model, suffix: str = "", overwrite: bool = False):
     """
-    Generate confusion matrix for leave-one-day-out cross-validation to predict species.
+    Generate plots and metrics for leave-one-day-out cross-validation to predict species.
 
-    Tests whether species-level differences are strong enough to generalize across batches.
+    This tests whether species-level differences are strong enough to generalize across batches.
     """
     dataset_filtered = dataset.filter(date=AUGUST_2025)
 
+    # Plot the three-panel figure with ROC curve, mean spectra, and feature importances.
     cv_results = plotting.plot_lobo_cv_results(
         dataset_filtered,
         y_column="species",
@@ -237,7 +236,7 @@ def plot_lodo_cv_species_prediction(dataset, model, suffix: str = "", overwrite:
 
     plt.tight_layout()
     plotting.utils.save_figure(
-        OUTPUT_DIR / f"cf--lodo-cv--species-prediction{suffix}.pdf",
+        OUTPUT_DIR / f"cf--lodo-cv--species-prediction-roc-curve{suffix}.pdf",
         overwrite=overwrite,
     )
 
@@ -251,6 +250,20 @@ def plot_lodo_cv_species_prediction(dataset, model, suffix: str = "", overwrite:
             batch_labels=labels["day"].values,
             model=model,
         )
+
+    plotting.plot_confusion_matrix(
+        cv_results.confusion_matrix,
+        cv_results.unique_labels,
+        figsize=(6, 5),
+        show_cell_counts=True,
+        cmap=mpl.cm.Blues,
+    )
+
+    plt.tight_layout()
+    plotting.utils.save_figure(
+        OUTPUT_DIR / f"cf--lodo-cv--species-prediction{suffix}.pdf",
+        overwrite=overwrite,
+    )
 
     report = _format_metrics_report(
         task_description="Species prediction",
