@@ -25,7 +25,7 @@ The raw spectral data and metadata are stored in the `data.zip` file. This file 
 
 This directory contains the raw spectral data (in CSV format) and metadata (as platemaps, also in CSV format). For details about the structure of the data, refer to the code that loads the data in [src/raman_batch_effects/loaders.py](src/raman_batch_effects/loaders.py).
 
-## Setup
+## Environment setup
 
 We use [uv](https://docs.astral.sh/uv/) to manage the dependencies and run the scripts.
 
@@ -41,9 +41,9 @@ Then unzip the raw data:
 make unzip-data
 ```
 
-This will unzip the data into the `data/` directory. The size of the unzipped data is 40MB.
+This will unzip the data into the `data/` directory. The size of the unzipped data is 40MB. After this, you should be able to run the scripts to generate the figures and results shown in the pub (see below).
 
-After this, you should be able to run the scripts to generate the figures and results shown in the pub (see below).
+All of the code in this repo was run on a MacBook Pro with an Apple M1 Max chip, 64GB of RAM, and macOS Ventura 13.
 
 ## Generating the figures and results shown in the pub
 

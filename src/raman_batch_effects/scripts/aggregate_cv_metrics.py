@@ -64,7 +64,7 @@ def _fmt_plot(values):
 def main():
     yaml_files = sorted(glob.glob(str(INPUT_DIR / "metrics--*.yaml")))
     if not yaml_files:
-        print(f"No metrics YAML files found in {OUTPUT_DIR}", file=sys.stderr)
+        print(f"No metrics YAML files found in {INPUT_DIR}", file=sys.stderr)
         sys.exit(1)
 
     rows = []

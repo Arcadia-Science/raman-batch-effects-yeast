@@ -5,7 +5,7 @@ from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
-from raman_batch_effects.utils import get_data_dirpath
+from raman_batch_effects.utils import find_repo_root, get_data_dirpath
 
 RANDOM_STATE = 42
 CROP_REGION = (300, 1800)
@@ -66,6 +66,6 @@ DEFAULT_RF_MODEL = RandomForestClassifier(
 def get_output_dir(script_name: str) -> Path:
     """Get the output directory for a script, creating it if necessary."""
     todays_date = datetime.today().strftime("%Y-%m-%d")
-    output_dir = Path("output") / todays_date / script_name
+    output_dir = find_repo_root() / "output" / todays_date / script_name
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
