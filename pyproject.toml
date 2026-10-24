@@ -19,7 +19,7 @@ dependencies = [
     "ipykernel==6.30.1",
     "joblib==1.5.3",
     "matplotlib==3.10.6",
-    "nbconvert==7.16.6",
+    "nbconvert==7.17.2",
     "nbformat==5.10.4",
     "numpy==2.3.5", # pin to avoid a conflict between numpy 2.4 and ramanspy.
     "pandas==2.3.2",
